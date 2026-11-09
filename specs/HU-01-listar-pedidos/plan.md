@@ -72,9 +72,16 @@ Mapa de criterios a archivos de test (un test por criterio; `[Theory]` cuando el
 | Criterio | Archivo |
 |---|---|
 | CA1–CA10, CA10b, CA11, CA13–CA16 | `ListadoPedidosTests` |
-| CA17–CA21 (errores y parámetro asociado) | `FiltroPedidosTests` y `ListarPedidosEndpointTests` (400 + ProblemDetails) |
-| CA10c (parámetros vacíos) | `ListarPedidosEndpointTests` |
-| CA12 (8 campos iguales al detalle) | `ListarPedidosEndpointTests` |
+| CA10c, CA12, CA17–CA21 (contrato HTTP, 400 + ProblemDetails) | `ListarPedidosEndpointTests` |
+
+`FiltroPedidosTests` agrega tests unitarios de apoyo para `FiltroPedidos.Crear` (valores por defecto, espacios,
+varios errores a la vez, signos en números). No reemplazan a ningún criterio.
+
+El error de fechas invertidas (RN9) se asocia a `desde`. Si `desde` o `hasta` tienen formato inválido, no se
+compara el rango.
+
+Corrección aprobada (2026-11-09): CA1 (último de la página 1 es el Id 18) y CA14 (primero de la página 2 es el
+Id 39) se ajustaron a los datos de ejemplo.
 
 Los nombres siguen la convención `Metodo_Escenario_Resultado`, por ejemplo
 `Listar_ClienteC001_Devuelve5PedidosOrdenados`.

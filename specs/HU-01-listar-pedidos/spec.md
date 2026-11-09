@@ -49,8 +49,8 @@ equivalente de Pedidos Legado.
 Con los 45 pedidos de ejemplo de `PedidoRepositorioEnMemoria`:
 
 ### Filtros y orden
-- [ ] CA1. Sin filtros devuelve la página 1 con 20 pedidos (primero el Id 21, del 2026-10-31; último el Id 39,
-      del 2026-10-04), con `totalRegistros` 45, `totalPaginas` 3, `pagina` 1 y `tamanoPagina` 20.
+- [ ] CA1. Sin filtros devuelve la página 1 con 20 pedidos (primero el Id 21, del 2026-10-31; último el Id 18,
+      del 2026-10-05), con `totalRegistros` 45, `totalPaginas` 3, `pagina` 1 y `tamanoPagina` 20.
 - [ ] CA2. Cliente `C-001` devuelve 5 pedidos en este orden: 8, 16, 24, 32, 40.
 - [ ] CA3. Estado `Pendiente` devuelve 5 pedidos en este orden: 27, 18, 45, 9, 36.
 - [ ] CA4. Estado `entregado` (en minúsculas) devuelve los mismos 15 pedidos que `Entregado`.
@@ -73,7 +73,7 @@ Con los 45 pedidos de ejemplo de `PedidoRepositorioEnMemoria`:
 
 ### Paginación
 - [ ] CA13. `pagina=3` (tamaño por defecto) devuelve 5 pedidos: 36, 17, 38, 19, 40.
-- [ ] CA14. `pagina=2` devuelve 20 pedidos: el primero es el Id 20 y el último el Id 15.
+- [ ] CA14. `pagina=2` devuelve 20 pedidos: el primero es el Id 39 y el último el Id 15.
 - [ ] CA15. `pagina=4` devuelve 200 con `pedidos` vacío, `totalRegistros` 45 y `totalPaginas` 3.
 - [ ] CA16. `tamanoPagina=100` devuelve los 45 pedidos en una sola página (`totalPaginas` 1).
 
