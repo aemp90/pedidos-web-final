@@ -49,41 +49,41 @@ equivalente de Pedidos Legado.
 Con los 45 pedidos de ejemplo de `PedidoRepositorioEnMemoria`:
 
 ### Filtros y orden
-- [ ] CA1. Sin filtros devuelve la página 1 con 20 pedidos (primero el Id 21, del 2026-10-31; último el Id 18,
+- [x] CA1. Sin filtros devuelve la página 1 con 20 pedidos (primero el Id 21, del 2026-10-31; último el Id 18,
       del 2026-10-05), con `totalRegistros` 45, `totalPaginas` 3, `pagina` 1 y `tamanoPagina` 20.
-- [ ] CA2. Cliente `C-001` devuelve 5 pedidos en este orden: 8, 16, 24, 32, 40.
-- [ ] CA3. Estado `Pendiente` devuelve 5 pedidos en este orden: 27, 18, 45, 9, 36.
-- [ ] CA4. Estado `entregado` (en minúsculas) devuelve los mismos 15 pedidos que `Entregado`.
-- [ ] CA5. Rango 2026-10-01 a 2026-10-31 da `totalRegistros` 23; rango 2026-09-01 a 2026-09-30 da 22.
-- [ ] CA6. Rango inclusivo: desde = hasta = 2026-09-02 devuelve solo el Id 40; desde = hasta = 2026-10-31
+- [x] CA2. Cliente `C-001` devuelve 5 pedidos en este orden: 8, 16, 24, 32, 40.
+- [x] CA3. Estado `Pendiente` devuelve 5 pedidos en este orden: 27, 18, 45, 9, 36.
+- [x] CA4. Estado `entregado` (en minúsculas) devuelve los mismos 15 pedidos que `Entregado`.
+- [x] CA5. Rango 2026-10-01 a 2026-10-31 da `totalRegistros` 23; rango 2026-09-01 a 2026-09-30 da 22.
+- [x] CA6. Rango inclusivo: desde = hasta = 2026-09-02 devuelve solo el Id 40; desde = hasta = 2026-10-31
       devuelve solo el Id 21.
-- [ ] CA7. Rango abierto: solo desde = 2026-10-25 devuelve 7 pedidos (21, 42, 2, 23, 44, 4, 25); solo
+- [x] CA7. Rango abierto: solo desde = 2026-10-25 devuelve 7 pedidos (21, 42, 2, 23, 44, 4, 25); solo
       hasta = 2026-09-05 devuelve 3 pedidos (38, 19, 40).
-- [ ] CA8. Combinación: cliente `C-001` + estado `Entregado` devuelve 8, 24, 40; si además el rango es
+- [x] CA8. Combinación: cliente `C-001` + estado `Entregado` devuelve 8, 24, 40; si además el rango es
       2026-10-01 a 2026-10-31, devuelve solo el 8.
-- [ ] CA9. Cliente `C-999` devuelve 200 con `pedidos` vacío, `totalRegistros` 0 y `totalPaginas` 0.
-- [ ] CA10. Cliente `C-002` + estado `Despachado` + rango 2026-09-01 a 2026-09-30 devuelve 200 con `pedidos` vacío
+- [x] CA9. Cliente `C-999` devuelve 200 con `pedidos` vacío, `totalRegistros` 0 y `totalPaginas` 0.
+- [x] CA10. Cliente `C-002` + estado `Despachado` + rango 2026-09-01 a 2026-09-30 devuelve 200 con `pedidos` vacío
       y `totalPaginas` 0.
-- [ ] CA10b. Cliente `c-001` (en minúsculas) devuelve los mismos 5 pedidos que `C-001`.
-- [ ] CA10c. `estado=&clienteId=` (parámetros vacíos) devuelve lo mismo que sin filtros (`totalRegistros` 45).
-- [ ] CA11. Desempate: con un repositorio de prueba que tenga dos pedidos de la misma fecha, sale primero el de
+- [x] CA10b. Cliente `c-001` (en minúsculas) devuelve los mismos 5 pedidos que `C-001`.
+- [x] CA10c. `estado=&clienteId=` (parámetros vacíos) devuelve lo mismo que sin filtros (`totalRegistros` 45).
+- [x] CA11. Desempate: con un repositorio de prueba que tenga dos pedidos de la misma fecha, sale primero el de
       menor `Id`. Los datos de ejemplo no tienen fechas repetidas, así que no sirven para este criterio.
-- [ ] CA12. Cada pedido del listado trae los 8 campos de RN16, con los mismos valores que su detalle
+- [x] CA12. Cada pedido del listado trae los 8 campos de RN16, con los mismos valores que su detalle
       (ej. pedido 8, ver "Ejemplos").
 
 ### Paginación
-- [ ] CA13. `pagina=3` (tamaño por defecto) devuelve 5 pedidos: 36, 17, 38, 19, 40.
-- [ ] CA14. `pagina=2` devuelve 20 pedidos: el primero es el Id 39 y el último el Id 15.
-- [ ] CA15. `pagina=4` devuelve 200 con `pedidos` vacío, `totalRegistros` 45 y `totalPaginas` 3.
-- [ ] CA16. `tamanoPagina=100` devuelve los 45 pedidos en una sola página (`totalPaginas` 1).
+- [x] CA13. `pagina=3` (tamaño por defecto) devuelve 5 pedidos: 36, 17, 38, 19, 40.
+- [x] CA14. `pagina=2` devuelve 20 pedidos: el primero es el Id 39 y el último el Id 15.
+- [x] CA15. `pagina=4` devuelve 200 con `pedidos` vacío, `totalRegistros` 45 y `totalPaginas` 3.
+- [x] CA16. `tamanoPagina=100` devuelve los 45 pedidos en una sola página (`totalPaginas` 1).
 
 ### Errores (400 + ProblemDetails)
-- [ ] CA17. `estado=Enviado` devuelve 400 con un error asociado a `estado`.
-- [ ] CA18. `desde=31-10-2026` devuelve 400 con un error asociado a `desde`; `hasta=2026-02-30` devuelve 400
+- [x] CA17. `estado=Enviado` devuelve 400 con un error asociado a `estado`.
+- [x] CA18. `desde=31-10-2026` devuelve 400 con un error asociado a `desde`; `hasta=2026-02-30` devuelve 400
       con un error asociado a `hasta`.
-- [ ] CA19. `desde=2026-10-31&hasta=2026-10-01` devuelve 400 (fechas invertidas).
-- [ ] CA20. `pagina=0` devuelve 400; `tamanoPagina=0` y `tamanoPagina=101` devuelven 400.
-- [ ] CA21. `pagina=abc` y `tamanoPagina=abc` devuelven 400 con ProblemDetails y el error asociado al parámetro.
+- [x] CA19. `desde=2026-10-31&hasta=2026-10-01` devuelve 400 (fechas invertidas).
+- [x] CA20. `pagina=0` devuelve 400; `tamanoPagina=0` y `tamanoPagina=101` devuelven 400.
+- [x] CA21. `pagina=abc` y `tamanoPagina=abc` devuelven 400 con ProblemDetails y el error asociado al parámetro.
 
 ## Ejemplos de entrada y salida
 Ruta: `GET /api/pedidos?clienteId=&estado=&desde=&hasta=&pagina=&tamanoPagina=`
@@ -139,6 +139,15 @@ después de la última (RN12).
 ## Decisiones técnicas aprobadas por el PO
 - Los tests del endpoint van en `tests/PedidosWeb.Core.Tests`. Se aprueba agregarle la referencia a
   `PedidosWeb.Api` y el paquete NuGet `Microsoft.AspNetCore.Mvc.Testing` para los tests de integración.
+
+## Notas de implementación (2026-11-09)
+- Además de RN9b, a cada parámetro se le quitan los espacios al inicio y al final: ` C-001 ` equivale a `C-001`.
+- Si `desde` o `hasta` tienen formato inválido, no se compara el rango (RN9). El error de fechas invertidas se
+  asocia a `desde`.
+- `pagina` y `tamanoPagina` no aceptan signo ni separadores (`+1`, `1,000` y `1.5` son error, RN11).
+- `Microsoft.AspNetCore.Mvc.Testing` quedó fijo en la versión `10.0.14`.
+- Tests: `ListadoPedidosTests` (CA1–CA11, CA13–CA16), `ListarPedidosEndpointTests` (CA10c, CA12, CA17–CA21) y
+  `FiltroPedidosTests` (tests de apoyo de la validación).
 
 ## Preguntas abiertas
 Ninguna por ahora.
