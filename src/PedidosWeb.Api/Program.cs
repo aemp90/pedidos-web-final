@@ -3,6 +3,7 @@ using PedidosWeb.Core.Pedidos;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IPedidoRepositorio, PedidoRepositorioEnMemoria>();
+builder.Services.AddSingleton<ListadoPedidos>();
 
 var app = builder.Build();
 
@@ -15,8 +16,26 @@ app.MapGet("/api/pedidos/{id:int}", (int id, IPedidoRepositorio repositorio) =>
         ? Results.Ok(pedido)
         : Results.NotFound());
 
-// HU-01 · Listar pedidos con filtros: PENDIENTE.
-// Se construye en el taller de la Unidad 2, a partir de specs/HU-01-listar-pedidos/spec.md.
+// HU-01 · Listar pedidos con filtros (specs/HU-01-listar-pedidos/spec.md).
+// Los parámetros llegan como string? para que la validación y los mensajes en español los ponga Core,
+// y no el 400 automático de ASP.NET.
+app.MapGet("/api/pedidos", (
+    string? clienteId,
+    string? estado,
+    string? desde,
+    string? hasta,
+    string? pagina,
+    string? tamanoPagina,
+    ListadoPedidos listado) =>
+{
+    var resultado = FiltroPedidos.Crear(clienteId, estado, desde, hasta, pagina, tamanoPagina);
+
+    return resultado.Filtro is { } filtro
+        ? Results.Ok(listado.Listar(filtro))
+        : Results.ValidationProblem(
+            resultado.Errores.ToDictionary(),
+            title: "Uno o más parámetros no son válidos.");
+});
 
 app.Run();
 
