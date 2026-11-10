@@ -1,9 +1,12 @@
+using PedidosWeb.Core.Lineas;
 using PedidosWeb.Core.Pedidos;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IPedidoRepositorio, PedidoRepositorioEnMemoria>();
 builder.Services.AddSingleton<ListadoPedidos>();
+builder.Services.AddSingleton<ILineaPedidoRepositorio, LineaPedidoRepositorioEnMemoria>();
+builder.Services.AddSingleton<DetallePedidos>();
 
 var app = builder.Build();
 
@@ -15,6 +18,15 @@ app.MapGet("/api/pedidos/{id:int}", (int id, IPedidoRepositorio repositorio) =>
     repositorio.ObtenerPorId(id) is { } pedido
         ? Results.Ok(pedido)
         : Results.NotFound());
+
+// HU-02 · Detalle de un pedido con sus líneas y su total (specs/HU-02-detalle-pedido/spec.md).
+app.MapGet("/api/pedidos/{id:int}/detalle", (int id, DetallePedidos detalles) =>
+    detalles.Obtener(id) is { } detalle
+        ? Results.Ok(detalle)
+        : Results.Problem(
+            statusCode: StatusCodes.Status404NotFound,
+            title: "El pedido no existe.",
+            detail: $"No existe un pedido con id {id}."));
 
 // HU-01 · Listar pedidos con filtros (specs/HU-01-listar-pedidos/spec.md).
 // Los parámetros llegan como string? para que la validación y los mensajes en español los ponga Core,

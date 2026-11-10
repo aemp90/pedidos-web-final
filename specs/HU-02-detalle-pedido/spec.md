@@ -53,6 +53,20 @@ Un id que no es número entero (ej. `/api/pedidos/abc/detalle`) no calza con la 
 - Pantalla web (frontend) y autenticación del vendedor.
 - Base de datos (sigue en memoria hasta la Unidad 5).
 
+## Notas de implementación (2026-11-10)
+
+Todos los criterios se cumplen (`dotnet test` en verde). Implementado según `plan.md`, sin cambios respecto a lo
+escrito.
+
+| Criterio | Test |
+|---|---|
+| CA-01 | `DetallePedidosTests.Obtener_Pedido8_DevuelveDatosDelPedidoYDelCliente` y `DetallePedidoEndpointTests.GetDetalle_Pedido8_DevuelveJsonConPedidoClienteLineasYTotal` |
+| CA-02 | `TotalPedidoTests.CalcularSubtotal_LineasDelPedido8_DevuelveCantidadPorPrecio` |
+| CA-03 | `TotalPedidoTests.CalcularTotal_Pedido8_Devuelve120100` |
+| CA-04 | `TotalPedidoTests.CalcularTotal_Los45PedidosDeEjemplo_CoincideConPedidoTotal` |
+| CA-05 | `DetallePedidoEndpointTests.GetDetalle_IdInexistente_Devuelve404ConProblemDetails` |
+| CA-06 | `DetallePedidosTests.Obtener_PedidoSinLineas_DevuelveLineasVaciasYTotalCero` y `DetallePedidoEndpointTests.GetDetalle_PedidoSinLineas_Devuelve200ConLineasVaciasYTotalCero` |
+
 ## Preguntas abiertas
 
 Ninguna por ahora.
