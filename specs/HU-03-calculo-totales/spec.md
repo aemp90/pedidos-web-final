@@ -1,6 +1,6 @@
 # HU-03 · Cálculo de totales del pedido
 
-Estado: aprobada (2026-11-10)
+Estado: aprobada (2026-11-10) · modificada (2026-11-11): redondeo comercial (D7 / R05) y un solo cálculo, `CalculoTotales`
 
 **Historia:** Como vendedor, quiero que PedidosWeb calcule el total del pedido con descuentos, flete e IVA
 igual que lo que hoy se graba en Pedidos Legado, para cobrarle al cliente lo correcto y que el total que
@@ -33,19 +33,21 @@ son `decimal` en pesos chilenos, sin decimales.
    Sin líneas, el flete es 0 (regla 9).
 7. **IVA** = redondeo((neto + flete) × tasa) (regla 10). **Total** = neto + flete + IVA.
 
-**Redondeo (D7):** se replica el del legado, `Trunc(x + 0.49)`, que para montos positivos equivale a
-`Math.Floor(x + 0.49m)`. Ojo: un monto terminado en ,50 **baja** (18.963,50 → 18.963). Es a propósito,
-para que los totales cuadren con el histórico.
+**Redondeo (D7, modificada y confirmada el 2026-11-11):** redondeo comercial al peso,
+`Math.Round(x, 0, MidpointRounding.AwayFromZero)`: un monto terminado en ,50 **sube** (18.963,50 → 18.964).
+Corrige R05: el legado usa `Trunc(x + 0.49)`, que baja los ,50. Por eso 13 folios del histórico difieren en
+±1 o 2 pesos (`docs/migracion/defectos-corregidos.md`, D1).
 
 ## Criterios de aceptación
 
 Cada criterio se puede comprobar con un sí o un no. Los casos son pedidos reales de
 `legado/db/datos/` (folio entre paréntesis) y el total esperado es el que el legado grabó. Tasa de IVA 0,19,
-salvo en CA-10.
+salvo en CA-10. Los folios 1002, 1018 y 1027 (CA-01, CA-06 y CA-08) esperan el valor con redondeo
+comercial, no el grabado (R05).
 
 - **CA-01 · Sin descuento.** Dadas las líneas 5 × 8.210 (BEB) y 30 × 5.000 (CON), cliente normal de la
   región 13 con flete base 3.500 (folio 1002), cuando calculo, entonces subtotal 191.050, descuento 0,
-  flete 3.500, IVA 36.964 y total 231.514.
+  flete 3.500, IVA 36.965 (36.964,50 sube) y total 231.515 (el legado grabó 231.514).
 - **CA-02 · Límite exacto de 500.000 → 5 %.** Dada la línea 40 × 12.500 (ABA), cliente normal de la región 1
   con flete base 8.900 (folio 1019), cuando calculo, entonces porcentaje 5 %, descuento 25.000 y total 575.841.
 - **CA-03 · Límite exacto de 1.000.000 → 8 %.** Dada la línea 20 × 50.000 (ABA), cliente normal de la región 6
@@ -57,21 +59,26 @@ salvo en CA-10.
   flete base 3.500 (folio 1038), cuando calculo, entonces porcentaje 3 %, descuento 985 y total 42.072.
 - **CA-06 · Tope de 10 % y recargo de la región 11.** Dadas las líneas 30 × 29.990 (LIM), 1 × 39.990 (OFE) y
   20 × 22.350 (CON), cliente VIP de la región 11 con flete base 14.990 (folio 1027), cuando calculo, entonces
-  base 1.346.700, porcentaje 10 % (no 11 %), descuento 134.670, flete 17.238 y total 1.510.417.
+  base 1.346.700, porcentaje 10 % (no 11 %), descuento 134.670, flete 17.239 (17.238,50 sube) y total
+  1.510.418 (el legado grabó 1.510.417).
 - **CA-07 · Las líneas OFE no entran en la base.** Dadas las líneas 3 × 18.900 (ABA), 2 × 18.350 (LIM) y
   36 × 35.990 (OFE), cliente normal de la región 8 con flete base 6.900 (folio 1031), cuando calculo, entonces
   subtotal 1.389.040, base 93.400, porcentaje 0 % y total 1.661.169.
-- **CA-08 · Recargo de la región 12 con redondeo hacia abajo.** Dadas las líneas 3 × 19.200 (PER) y
+- **CA-08 · Recargo de la región 12 con redondeo comercial.** Dadas las líneas 3 × 19.200 (PER) y
   15 × 5.000 (CON), cliente normal de la región 12 con flete base 16.490 (folio 1018), cuando calculo,
-  entonces flete 18.963 (16.490 × 1,15 = 18.963,50) y total 180.360.
+  entonces flete 18.964 (16.490 × 1,15 = 18.963,50 sube) y total 180.361 (el legado grabó 180.360).
 - **CA-09 · Pedido sin líneas.** Dado un pedido sin líneas, cliente normal de la región 13 con flete base
   3.500, cuando calculo, entonces subtotal, descuento, flete, IVA y total son 0.
 - **CA-10 · La tasa de IVA es un dato de entrada.** Dadas las líneas del CA-01 con tasa 0,10, cuando calculo,
   entonces IVA 19.455 y total 214.005.
 - **CA-11 · Cuadratura con el histórico.** Dado cualquiera de los 60 pedidos de `legado/db/datos/PEDIDOS.csv`
   (líneas de `PEDIDO_LINEAS.csv`, categoría de `PRODUCTOS.csv`, VIP y región de `CLIENTES.csv`, flete base de
-  `REGIONES.csv`), cuando calculo, entonces el total es igual a su `TOTAL` grabado. Comprobado antes de
-  escribir esta spec: los 60 coinciden.
+  `REGIONES.csv`), cuando calculo, entonces el total es igual a su `TOTAL` grabado, salvo los 13 folios de
+  R05 (1002, 1006, 1008, 1018, 1021, 1023, 1025, 1027, 1036, 1037, 1042, 1046 y 1054), que difieren en 1 o
+  2 pesos. Con el redondeo del legado coincidían los 60.
+- **CA-13 · Golden master.** Dado cualquiera de los 60 casos de `migracion/golden-master.csv`, cuando calculo,
+  entonces porcentaje, descuento, flete, IVA y total son iguales a los del caso. El CSV refleja el legado con
+  R05 y los umbrales corregidos (`docs/migracion/defectos-corregidos.md`, D1 y D2).
 
 - **CA-12 · Líneas imposibles.** Dada una línea con cantidad ≤ 0 o con precio unitario ≤ 0, cuando calculo,
   entonces se lanza `ArgumentException` y no se devuelve ningún total.
@@ -103,20 +110,28 @@ Todos los criterios se cumplen (`dotnet test` en verde: 121 tests, 0 advertencia
 Prueba de mutación: con `>` en vez de `>=` en los límites (el bug de la pantalla del legado) fallan CA-02,
 CA-03, CA-04 y CA-11; se restauró el código.
 
-| Criterio | Test (`Totales/CalculadoraTotalesTests`) |
+### Cambio del 2026-11-11 · un solo cálculo
+
+`CalculadoraTotales` (esta historia) y `CalculoTotales` (la migración a C# de `UCalculoTotales.pas`,
+Unidad 5) se unificaron en **`CalculoTotales`**, con las reglas de esta spec y el redondeo comercial (D7
+modificada). Se borró `CalculadoraTotales.cs`, y sus tests pasaron a `Totales/CalculoTotalesTests`.
+Cambiaron CA-01, CA-06, CA-08 y CA-11, y se agregó CA-13. `dotnet test`: 181 tests en verde.
+
+| Criterio | Test (`Totales/CalculoTotalesTests`) |
 |---|---|
-| CA-01 | `Calcular_Folio1002SinDescuento_DevuelveTotal231514` |
+| CA-01 | `Calcular_Folio1002SinDescuento_DevuelveTotal231515` |
 | CA-02 | `Calcular_BaseExacta500000_Aplica5Porciento` |
 | CA-03 | `Calcular_BaseExacta1000000_Aplica8Porciento` |
 | CA-04 | `Calcular_ClienteVipConBase500000_Aplica8Porciento` |
 | CA-05 | `Calcular_ClienteVipSinVolumen_Aplica3Porciento` |
 | CA-06 | `Calcular_VipConBaseSobreUnMillon_TopaEn10PorcientoYRecargaRegion11` |
 | CA-07 | `Calcular_LineasOfe_NoEntranEnLaBase` |
-| CA-08 | `Calcular_Region12_RecargaFleteYRedondeaHaciaAbajo` |
+| CA-08 | `Calcular_Region12_RecargaFleteYRedondeaHaciaArriba` |
 | CA-09 | `Calcular_SinLineas_DevuelveTodoCero` |
 | CA-10 | `Calcular_TasaIva10Porciento_UsaLaTasaRecibida` |
-| CA-11 | `Calcular_Los60PedidosDelLegado_CoincidenConTotalGrabado` (lee los CSV de `legado/db/datos/`, enlazados en el `.csproj` de tests) |
+| CA-11 | `Calcular_Los60PedidosDelLegado_SoloDescuadranLosFoliosDeR05PorHasta2Pesos` (lee los CSV de `legado/db/datos/`, enlazados en el `.csproj` de tests) |
 | CA-12 | `Calcular_LineaConCantidadOPrecioNoPositivo_LanzaArgumentException` (4 casos) |
+| CA-13 | `Calcular_CasoDelGoldenMaster_IgualaPorcentajeDescuentoFleteIvaYTotal` (60 casos) |
 
 ## Preguntas abiertas
 

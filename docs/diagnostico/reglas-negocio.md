@@ -52,7 +52,7 @@ Punto de control E2: al menos 8 reglas, y al menos 5 verificadas leyendo el cód
 | D5a | ¿Se bloquea a los clientes inactivos? | Sí: se rechaza el pedido de un cliente con `ACTIVO` = falso (cambio respecto del legado) | 26 |
 | D5b | ¿Un vencimiento en el futuro bloquea? | No: bloquea solo si `SALDO_VENCIDO > 0` y el vencimiento quedó **más de 60 días en el pasado** (se corrige el bug de `DaysBetween`) | 13 |
 | D6 | ¿Stock negativo para VIP? ¿Se graban pedidos sin stock? | Se mantiene el margen VIP de −20 (normal: 0), pero el stock se valida **antes de grabar** y se rechaza el pedido si se pasa del límite | 18 |
-| D7 | ¿Qué redondeo exige contabilidad? | Se replica el legado: `Trunc(x + 0.49)`, para que los totales cuadren con el histórico | 7 |
+| D7 | ¿Qué redondeo exige contabilidad? | **Modificada y confirmada el 2026-11-11:** redondeo comercial al peso (un ,50 sube). Corrige R05; 13 folios del histórico difieren en ±1 o 2 pesos (`docs/migracion/defectos-corregidos.md`, D1). Antes: se replicaba `Trunc(x + 0.49)` | 7 |
 
 ## Dudas abiertas para el negocio
 1. ¿Qué significa el estado `'A'` (folio 1018) y quién lo asigna? (D4)

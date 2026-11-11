@@ -1,117 +1,122 @@
 namespace PedidosWeb.Core.Totales;
 
 /// <summary>
-/// Migración a C# de <c>legado/src/UCalculoTotales.pas</c>, defectos incluidos (Unidad 5, etapa 2).
-/// Su contrato es <c>migracion/golden-master.csv</c>: tiene que igualar los 60 casos.
-/// Se porta tal cual, función por función, cambiando <c>Double</c> por <c>decimal</c>.
-/// Los defectos se corrigen recién en la etapa 3 (y quedan en <c>docs/migracion/defectos-corregidos.md</c>);
-/// el cálculo aprobado para el negocio (HU-03) es <see cref="CalculadoraTotales"/>.
+/// Cálculo del total de un pedido: descuento por volumen y VIP, flete por región e IVA (HU-03).
+/// Es el ÚNICO cálculo de totales de PedidosWeb: reemplaza a los dos del legado (<c>UCalculoTotales.pas</c>,
+/// que muestra el total en pantalla, y <c>UFrmPedidos.pas:296-319</c>, que lo graba), que no coincidían (RS-05).
+/// Reglas en <c>docs/diagnostico/reglas-negocio.md</c> (reglas 1–11, decisiones D1, D3 y D7).
+/// Su contrato es <c>migracion/golden-master.csv</c>; cada diferencia con el legado está en
+/// <c>docs/migracion/defectos-corregidos.md</c> (D1: redondeo R05; D2: umbrales).
 /// </summary>
 public static class CalculoTotales
 {
+    /// <summary>Tasa de IVA por defecto (regla 11, parámetro <c>TASA_IVA</c> del legado).</summary>
+    public const decimal TasaIvaPorDefecto = 0.19m;
+
+    /// <summary>Desde esta base (inclusive) se aplica el 8 % (D1).</summary>
+    public const decimal LimiteVolumenAlto = 1_000_000m;
+
+    /// <summary>Desde esta base (inclusive) se aplica el 5 % (D1).</summary>
+    public const decimal LimiteVolumenBajo = 500_000m;
+
+    public const decimal DescuentoVolumenAlto = 0.08m;
+    public const decimal DescuentoVolumenBajo = 0.05m;
+
+    /// <summary>Puntos que suma un cliente VIP (regla 4).</summary>
+    public const decimal DescuentoVip = 0.03m;
+
+    /// <summary>Porcentaje máximo de descuento (regla 6).</summary>
+    public const decimal TopeDescuento = 0.10m;
+
+    /// <summary>Recargo del flete en las regiones 11 y 12 (regla 8).</summary>
+    public const decimal RecargoFleteAustral = 1.15m;
+
+    /// <summary>Categoría de las ofertas, que no entran en la base del descuento (regla 3).</summary>
+    public const string CategoriaOferta = "OFE";
+
     /// <summary>
-    /// Calcula el desglose del total de un pedido tal como lo hace hoy el legado
-    /// (<c>CalcularTotales</c>, <c>UCalculoTotales.pas:108-122</c>).
+    /// Redondeo al peso, comercial: un monto terminado en ,50 SUBE (18.963,50 → 18.964) (D7, R05).
+    /// El legado hace <c>Trunc(x + 0.49)</c> (<c>UCalculoTotales.pas:48-51</c>, <c>UUtilidades.pas:28-31</c>),
+    /// que baja los ,50: por eso 13 folios del histórico difieren en ±1 o 2 pesos.
+    /// </summary>
+    public static decimal RedondearAlPeso(decimal valor) => Math.Round(valor, 0, MidpointRounding.AwayFromZero);
+
+    /// <summary>
+    /// Porcentaje de descuento como fracción: 8 % si la base es ≥ 1.000.000, 5 % si es ≥ 500.000, si no 0;
+    /// un VIP suma 3 puntos, y el total no pasa de 10 % (D1, reglas 1, 4 y 6).
+    /// Los límites son <c>&gt;=</c>, como al grabar (<c>UFrmPedidos.pas:296-299</c>), no <c>&gt;</c> como en la
+    /// pantalla del legado (<c>UCalculoTotales.pas:77-80</c>). No hay descuento de navidad (D3).
+    /// </summary>
+    public static decimal CalcularPorcentajeDescuento(decimal baseDescuento, bool esVip)
+    {
+        var porcentaje = baseDescuento >= LimiteVolumenAlto ? DescuentoVolumenAlto
+            : baseDescuento >= LimiteVolumenBajo ? DescuentoVolumenBajo
+            : 0m;
+
+        if (esVip)
+            porcentaje += DescuentoVip;
+
+        return Math.Min(porcentaje, TopeDescuento);
+    }
+
+    /// <summary>Flete de la región: con recargo de 15 % en las regiones 11 y 12, redondeado al peso (regla 8).</summary>
+    public static decimal CalcularFlete(decimal fleteBase, int region)
+    {
+        var esAustral = region is 11 or 12;
+        return RedondearAlPeso(esAustral ? fleteBase * RecargoFleteAustral : fleteBase);
+    }
+
+    /// <summary>
+    /// Calcula el desglose del total del pedido. Sin líneas, todo es 0 (regla 9).
     /// </summary>
     /// <param name="lineas">Líneas del pedido.</param>
     /// <param name="esVip">Si el cliente es VIP (<c>CLIENTES.TIPO = 'V'</c>).</param>
-    /// <param name="region">Región del cliente.</param>
+    /// <param name="region">Región del cliente (1 a 16).</param>
     /// <param name="fleteBase">Flete base de la región del cliente, en pesos chilenos.</param>
-    /// <param name="tasaIva">Tasa de IVA como fracción (0,19).</param>
+    /// <param name="tasaIva">Tasa de IVA como fracción (0,19 por defecto).</param>
+    /// <exception cref="ArgumentNullException">Si <paramref name="lineas"/> es null.</exception>
+    /// <exception cref="ArgumentException">Si alguna línea tiene cantidad o precio unitario ≤ 0.</exception>
     public static ResultadoTotales Calcular(
         IEnumerable<LineaCalculo> lineas,
         bool esVip,
         int region,
         decimal fleteBase,
-        decimal tasaIva)
+        decimal tasaIva = TasaIvaPorDefecto)
     {
         ArgumentNullException.ThrowIfNull(lineas);
         var lista = lineas.ToList();
+        Validar(lista);
 
-        // Igual que el legado: sin validar cantidades ni precios (el legado no valida nada aquí).
-        var subtotal = CalcularSubtotal(lista);
-        var baseDescuento = CalcularBaseDescuento(lista);
-        var porcentaje = PorcentajeDescuento(baseDescuento, esVip);
-        var descuento = Calc3(baseDescuento * porcentaje);
+        var subtotal = lista.Sum(SubtotalLinea);
+        var baseDescuento = lista.Where(l => !EsOferta(l)).Sum(SubtotalLinea);
+        var porcentaje = CalcularPorcentajeDescuento(baseDescuento, esVip);
+        var descuento = RedondearAlPeso(baseDescuento * porcentaje);
         var neto = subtotal - descuento;
-        var flete = lista.Count == 0 ? 0m : CalcularFlete(fleteBase, region); // :116-119
-        var iva = CalcularIva(neto, flete, tasaIva);
+        var flete = lista.Count == 0 ? 0m : CalcularFlete(fleteBase, region);
+        var iva = RedondearAlPeso((neto + flete) * tasaIva);
 
-        return new ResultadoTotales(subtotal, baseDescuento, porcentaje, descuento, neto, flete, iva,
-            neto + flete + iva);
+        return new ResultadoTotales(
+            subtotal, baseDescuento, porcentaje, descuento, neto, flete, iva, neto + flete + iva);
     }
 
-    /// <summary>
-    /// «Redondeo al peso» del legado: <c>Trunc(AValor + 0.49)</c> (<c>:48-51</c>).
-    /// Un monto terminado en ,50 BAJA. <c>Trunc</c> corta hacia cero, igual que <see cref="Math.Truncate(decimal)"/>.
-    /// </summary>
-    internal static decimal Calc3(decimal valor) => Math.Truncate(valor + 0.49m);
+    private static decimal SubtotalLinea(LineaCalculo linea) => linea.Cantidad * linea.PrecioUnitario;
 
-    // :53-60
-    internal static decimal CalcularSubtotal(IReadOnlyList<LineaCalculo> lineas)
-    {
-        var resultado = 0m;
-        foreach (var linea in lineas)
-            resultado += linea.Cantidad * linea.PrecioUnitario;
-        return resultado;
-    }
+    // Igual que UpperCase(Trim(...)) <> 'OFE' del legado (UCalculoTotales.pas:70).
+    private static bool EsOferta(LineaCalculo linea) =>
+        string.Equals(linea.Categoria?.Trim(), CategoriaOferta, StringComparison.OrdinalIgnoreCase);
 
-    // :63-73 · suma de las líneas que entran al descuento (todas menos OFE).
-    internal static decimal CalcularBaseDescuento(IReadOnlyList<LineaCalculo> lineas)
+    // CA-12: nunca se calcula un total con datos imposibles.
+    private static void Validar(IReadOnlyList<LineaCalculo> lineas)
     {
-        var resultado = 0m;
-        foreach (var linea in lineas)
+        for (var i = 0; i < lineas.Count; i++)
         {
-            if (UpperCaseDelphi(TrimDelphi(linea.Categoria)) != "OFE")
-                resultado += linea.Cantidad * linea.PrecioUnitario;
+            var linea = lineas[i] ?? throw new ArgumentException($"La línea {i + 1} es nula.", nameof(lineas));
+            if (linea.Cantidad <= 0)
+                throw new ArgumentException(
+                    $"La línea {i + 1} tiene cantidad {linea.Cantidad}; debe ser mayor que 0.", nameof(lineas));
+            if (linea.PrecioUnitario <= 0)
+                throw new ArgumentException(
+                    $"La línea {i + 1} tiene precio unitario {linea.PrecioUnitario}; debe ser mayor que 0.", nameof(lineas));
         }
-        return resultado;
     }
-
-    // :75-83 · DEFECTO del legado: límites con '>' (500.000 y 1.000.000 exactos no tienen descuento).
-    // El comentario de :4 («5 % sobre 400.000») no corresponde al código.
-    internal static decimal PorcentajeVolumen(decimal baseDescuento)
-    {
-        if (baseDescuento > 1_000_000m)
-            return 0.08m;
-        if (baseDescuento > 500_000m)
-            return 0.05m;
-        return 0m;
-    }
-
-    // :85-92 · VIP suma 3 puntos; tope 10 %.
-    internal static decimal PorcentajeDescuento(decimal baseDescuento, bool esVip)
-    {
-        var resultado = PorcentajeVolumen(baseDescuento);
-        if (esVip)
-            resultado += 0.03m;
-        if (resultado > 0.10m)
-            resultado = 0.10m;
-        return resultado;
-    }
-
-    // :95-101 · flete por región, con 15 % de recargo en las regiones 11 y 12.
-    internal static decimal CalcularFlete(decimal fleteBase, int region)
-    {
-        if (region == 11 || region == 12)
-            return Calc3(fleteBase * 1.15m);
-        return Calc3(fleteBase);
-    }
-
-    // :103-106
-    internal static decimal CalcularIva(decimal neto, decimal flete, decimal tasa) => Calc3((neto + flete) * tasa);
-
-    // Trim de Delphi (SysUtils): quita los caracteres <= ' ' de ambos extremos. Un string de Delphi nunca es nil.
-    private static string TrimDelphi(string? texto) => (texto ?? string.Empty).Trim(CaracteresDeControlYEspacio);
-
-    // UpperCase de Delphi: solo convierte 'a'..'z' (ASCII), no letras con tilde.
-    private static string UpperCaseDelphi(string texto) =>
-        string.Create(texto.Length, texto, (destino, origen) =>
-        {
-            for (var i = 0; i < origen.Length; i++)
-                destino[i] = origen[i] is >= 'a' and <= 'z' ? (char)(origen[i] - 32) : origen[i];
-        });
-
-    private static readonly char[] CaracteresDeControlYEspacio =
-        Enumerable.Range(0, 33).Select(c => (char)c).ToArray();
 }

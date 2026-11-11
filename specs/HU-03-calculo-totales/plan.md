@@ -2,6 +2,10 @@
 
 Estado: aprobado (2026-11-10) · Spec: [spec.md](spec.md)
 
+> **Actualización 2026-11-11:** `CalculadoraTotales` se unificó en `CalculoTotales` (mismos métodos y
+> constantes) y `RedondearAlPeso` pasó a redondeo comercial (D7 modificada, R05). Donde este plan dice
+> `CalculadoraTotales` o `Math.Floor(valor + 0.49m)`, léase lo nuevo; detalle en la spec.
+
 ## Contexto
 El módulo «Cálculo de totales» es el primero en la matriz de decisión (Modernizar, 4,40). Hoy el legado
 calcula el total en dos lugares con reglas distintas (RS-05). Esta historia lleva a `PedidosWeb.Core` **un
