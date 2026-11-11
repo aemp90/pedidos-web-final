@@ -117,7 +117,7 @@ La recomendación es estable con los tres juegos de pesos. Si priorizas costo, T
 |---|---|---|
 | M1 | Pesos (Costo 15 / Complejidad 15 / Riesgo 30 / Impacto 25 / Personas 15) | Aprobados |
 | M2 | Supuesto de Personas (equipo .NET, poco Delphi) | Confirmado |
-| M3 | Módulo 7: Reemplazar la base de datos DBISAM y el login propio por productos estándar | Aprobado. **Pendiente:** elegir el motor de base de datos y el proveedor de identidad (preguntar antes de agregar paquetes NuGet) |
+| M3 | Módulo 7: Reemplazar la base de datos DBISAM y el login propio por productos estándar | Aprobado. Motor de base de datos: **PostgreSQL** (cambiado desde MySQL el 2026-11-10). Proveedor de identidad: **ASP.NET Core Identity**, con los usuarios guardados en PostgreSQL (ambos decididos el 2026-11-10). Los paquetes NuGet necesarios se piden antes de agregarlos. Roles aprobados (reemplazan los niveles del legado, regla 24): **Vendedor** (nivel 1: toma pedidos y mantiene clientes normales), **Jefatura** (nivel 2, que el legado menciona pero nunca asigna: además crea clientes VIP y ve informes) y **Administrador** (nivel 9: todo, incluido borrar productos) |
 | M4 | Productos y Utilidades, con margen bajo | Se modernizan, igual que el resto |
 
 Resultado: **7 módulos se modernizan en PedidosWeb y 1 (datos, sesión y configuración) se reemplaza.** Ningún módulo se mantiene ni se refactoriza en Delphi; el legado sigue operando sin cambios hasta que cada módulo pase a PedidosWeb.
@@ -130,4 +130,4 @@ Resultado: **7 módulos se modernizan en PedidosWeb y 1 (datos, sesión y config
 2. **Hallazgo principal (con evidencia):** el total que ve el cliente y el que se graba se calculan en dos lugares con reglas distintas (`UCalculoTotales.pas:77` vs. `UFrmPedidos.pas:296`; folio 1011).
 3. **Riesgo más urgente:** seguridad: SQL concatenado (RS-01), clave de la base en el código (RS-02) y permisos según el nombre que se escribe (RS-03).
 4. **Estrategia y por dónde empezar:** modernizar 7 de 8 módulos en PedidosWeb y reemplazar base de datos y login por productos estándar; empezar por Cálculo de totales y Utilidades (puras, puntaje 4,40 y 3,90).
-5. **Próximo paso que se pide aprobar:** la spec de la historia «Cálculo de totales» con D1, D3 y D7, validada contra los totales históricos, y la elección del motor de base de datos y del proveedor de identidad.
+5. **Próximo paso que se pide aprobar:** la spec de la historia «Cálculo de totales» con D1, D3 y D7, validada contra los totales históricos (PostgreSQL y ASP.NET Core Identity ya están decididos para datos y login).

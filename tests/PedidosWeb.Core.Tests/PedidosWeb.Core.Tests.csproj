@@ -19,6 +19,11 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <!-- HU-03 · CA-11: datos históricos del legado (solo lectura) para la cuadratura de totales. -->
+  <ItemGroup>
+    <None Include="..\..\legado\db\datos\*.csv" Link="DatosLegado\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\PedidosWeb.Core\PedidosWeb.Core.csproj" />
     <ProjectReference Include="..\..\src\PedidosWeb.Api\PedidosWeb.Api.csproj" />

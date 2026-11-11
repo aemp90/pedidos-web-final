@@ -1,0 +1,26 @@
+# PostgreSQL local para desarrollo de Pedidos Web.
+# Uso (desde esta carpeta):
+#   1. Copia .env.example a .env y define POSTGRES_PASSWORD (el .env no se versiona).
+#   2. docker compose up -d
+#   3. docker compose down        (agrega -v para borrar también los datos)
+services:
+  postgres:
+    image: postgres:17
+    container_name: pedidos-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-pedidos}
+      POSTGRES_USER: ${POSTGRES_USER:-pedidos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en infra/.env}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pedidos-pg-datos:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pedidos-pg-datos:
