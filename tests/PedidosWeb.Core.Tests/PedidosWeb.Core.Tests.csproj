@@ -24,6 +24,11 @@
     <None Include="..\..\legado\db\datos\*.csv" Link="DatosLegado\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- Unidad 5: golden master de la migración del cálculo de totales (contrato, no se edita para que un test pase). -->
+  <ItemGroup>
+    <None Include="..\..\migracion\golden-master.csv" Link="golden-master.csv" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\PedidosWeb.Core\PedidosWeb.Core.csproj" />
     <ProjectReference Include="..\..\src\PedidosWeb.Api\PedidosWeb.Api.csproj" />
