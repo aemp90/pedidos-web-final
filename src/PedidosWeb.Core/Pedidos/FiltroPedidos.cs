@@ -90,6 +90,27 @@ public sealed record FiltroPedidos
         });
     }
 
+    /// <summary>
+    /// Devuelve los pedidos cuya <see cref="Pedido.Fecha"/> está entre <paramref name="desde"/> y
+    /// <paramref name="hasta"/>, ambos inclusive (HU-03). Conserva el orden de entrada.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">Si <paramref name="pedidos"/> es null.</exception>
+    /// <exception cref="ArgumentException">Si <paramref name="desde"/> es posterior a <paramref name="hasta"/> (CA-04).</exception>
+    public static IReadOnlyList<Pedido> EntreFechas(IEnumerable<Pedido> pedidos, DateOnly desde, DateOnly hasta)
+    {
+        ArgumentNullException.ThrowIfNull(pedidos);
+
+        if (desde > hasta)
+        {
+            throw new ArgumentException(
+                $"La fecha desde ({desde:yyyy-MM-dd}) no puede ser posterior a la fecha hasta ({hasta:yyyy-MM-dd}).",
+                nameof(desde));
+        }
+
+        // CA-01, CA-02: ambos límites son inclusive.
+        return pedidos.Where(p => p.Fecha >= desde && p.Fecha <= hasta).ToList();
+    }
+
     private static string? Normalizar(string? valor) =>
         string.IsNullOrWhiteSpace(valor) ? null : valor.Trim();
 
