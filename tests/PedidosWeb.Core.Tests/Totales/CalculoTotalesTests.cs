@@ -153,6 +153,68 @@ public class CalculoTotalesTests
     }
 
     // ---------------------------------------------------------------------------------------------
+    // U6 · Tests de borde que el golden master no cubre.
+    // ---------------------------------------------------------------------------------------------
+
+    // Un peso bajo cada umbral (D1): el CSV solo trae bases de 500.000 y 1.000.000 exactos.
+    [Theory]
+    [InlineData(499_999, 0.00, 0)]          // queda en 0 %
+    [InlineData(999_999, 0.05, 50_000)]     // 49.999,95 → 50.000, queda en 5 %
+    public void Calcular_BaseUnPesoBajoElUmbral_NoSubeDeTramo(int precio, decimal porcentaje, int descuento)
+    {
+        var r = CalculoTotales.Calcular([L(1, precio, "ABA")], esVip: false, region: 13, fleteBase: 3500m);
+
+        Assert.Equal(porcentaje, r.PorcentajeDescuento);
+        Assert.Equal(descuento, r.Descuento);
+    }
+
+    // Regla 3: igual que UpperCase(Trim(...)) del legado; el CSV siempre trae "OFE" limpio.
+    [Theory]
+    [InlineData("ofe")]
+    [InlineData(" OFE ")]
+    [InlineData("Ofe")]
+    public void Calcular_CategoriaOfeConOtraEscritura_NoEntraEnLaBase(string categoria)
+    {
+        var r = CalculoTotales.Calcular([L(1, 100_000m, "ABA"), L(1, 600_000m, categoria)],
+            esVip: false, region: 13, fleteBase: 3500m);
+
+        Assert.Equal(100_000m, r.BaseDescuento);
+        Assert.Equal(0m, r.PorcentajeDescuento);
+    }
+
+    // Sin categoría no es oferta: entra en la base y no se cae.
+    [Fact]
+    public void Calcular_LineaSinCategoria_EntraEnLaBaseSinFallar()
+    {
+        var r = CalculoTotales.Calcular([L(1, 500_000m, null!)], esVip: false, region: 13, fleteBase: 3500m);
+
+        Assert.Equal(500_000m, r.BaseDescuento);
+        Assert.Equal(0.05m, r.PorcentajeDescuento);
+    }
+
+    // CA-12: una línea nula se informa con su número, no como NullReferenceException.
+    [Fact]
+    public void Calcular_LineaNula_LanzaArgumentExceptionConElNumeroDeLinea()
+    {
+        LineaCalculo[] lineas = [L(1, 1000m, "ABA"), null!];
+
+        var ex = Assert.Throws<ArgumentException>(() =>
+            CalculoTotales.Calcular(lineas, esVip: false, region: 13, fleteBase: 3500m));
+
+        Assert.Contains("línea 2", ex.Message);
+    }
+
+    // Lista nula ≠ sin líneas (CA-09): es un error de quien llama, no un pedido en cero.
+    [Fact]
+    public void Calcular_ListaNula_LanzaArgumentNullException()
+    {
+        var ex = Assert.Throws<ArgumentNullException>(() =>
+            CalculoTotales.Calcular(null!, esVip: false, region: 13, fleteBase: 3500m));
+
+        Assert.Equal("lineas", ex.ParamName);
+    }
+
+    // ---------------------------------------------------------------------------------------------
     // CA-11 · Cuadratura con el histórico: los 60 pedidos de legado/db/datos/ (copiados a
     // bin/.../DatosLegado/ por el .csproj). Solo descuadran los 13 folios de R05, y por a lo más 2 pesos.
     // ---------------------------------------------------------------------------------------------
