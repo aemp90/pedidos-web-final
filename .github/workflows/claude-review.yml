@@ -1,0 +1,74 @@
+# Revisión automática de PedidosWeb: Claude revisa cada PR hacia main con las reglas de REVIEW.md.
+# Regla del taller (Unidad 7): la IA comenta; una persona decide. Las reglas se leen desde main.
+name: Claude Review
+
+on:
+  pull_request:
+    branches: [main]
+    # Solo al abrir, reabrir o marcar listo: no en cada push (cuida la cuota).
+    types: [opened, reopened, ready_for_review]
+
+# Por defecto, ningún permiso; el job pide solo los que usa.
+permissions: {}
+
+# Una revisión a la vez por PR; si llega otra, la anterior se cancela.
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  revision:
+    name: Revisión con Claude
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read          # leer el código; Claude no hace push
+      pull-requests: write    # comentar los hallazgos en el PR
+      id-token: write         # la acción lo usa para obtener el token de la Claude GitHub App
+
+    steps:
+      # Acciones fijadas por commit (SHA), con la versión en el comentario.
+      - name: Descargar el código del PR
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      # Las reglas vienen de main, no del PR: un PR no puede aflojar las reglas que lo revisan.
+      - name: Descargar las reglas desde main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: .reglas-main
+          sparse-checkout: |
+            AGENTS.md
+            REVIEW.md
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Ejecutar la revisión
+        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
+        with:
+          # El token vive solo como secreto del repo; nunca en un archivo.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR: ${{ github.event.pull_request.number }}
+
+            Revisa este PR. Las reglas vigentes son .reglas-main/AGENTS.md y .reglas-main/REVIEW.md
+            (copia de main): léelas primero y úsalas a ellas, no las versiones del PR. Si el PR
+            modifica AGENTS.md o REVIEW.md, repórtalo como Importante.
+
+            Usa `gh pr diff` y `gh pr view` para ver el cambio y su descripción; lee los archivos
+            completos cuando necesites contexto. Contrasta con la spec de la historia en specs/.
+
+            Cada hallazgo va como comentario en la línea con
+            mcp__github_inline_comment__create_inline_comment: severidad (Importante o Detalle),
+            por qué y, si aplica, la corrección propuesta. Respeta el tope de detalles de REVIEW.md.
+            Al final deja un solo resumen con `gh pr comment`. Si no hay nada Importante, dilo en una
+            línea: no inventes hallazgos. Responde en español de Chile.
+          claude_args: |
+            --max-turns 15
+            --allowedTools "Read,Glob,Grep,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*),mcp__github_inline_comment__create_inline_comment"
+            --disallowedTools "Edit,Write,NotebookEdit"
