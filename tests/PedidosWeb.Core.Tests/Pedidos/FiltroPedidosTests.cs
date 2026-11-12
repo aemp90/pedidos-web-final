@@ -220,4 +220,58 @@ public class FiltroPedidosTests
             ["desde", "estado", "hasta", "pagina", "tamanoPagina"],
             resultado.Errores.Keys.Order());
     }
+
+    // ---------- HU-03 · EntreFechas ----------
+
+    private static readonly DateOnly Desde = new(2026, 10, 1);
+    private static readonly DateOnly Hasta = new(2026, 10, 31);
+
+    private static Pedido PedidoDel(DateOnly fecha, int id = 1) =>
+        new(id, $"PED-STGO-{id:D6}", "C-001", "Cliente de prueba", fecha, "Pendiente", 10_000m, "STGO");
+
+    // CA-01
+    [Fact]
+    public void EntreFechas_PedidoEnFechaDesde_Aparece()
+    {
+        var pedido = PedidoDel(Desde);
+
+        var resultado = FiltroPedidos.EntreFechas([pedido], Desde, Hasta);
+
+        Assert.Equal([pedido], resultado);
+    }
+
+    // CA-02
+    [Fact]
+    public void EntreFechas_PedidoEnFechaHasta_Aparece()
+    {
+        var pedido = PedidoDel(Hasta);
+
+        var resultado = FiltroPedidos.EntreFechas([pedido], Desde, Hasta);
+
+        Assert.Equal([pedido], resultado);
+    }
+
+    // CA-03
+    [Fact]
+    public void EntreFechas_PedidosFueraDelRango_NoAparecen()
+    {
+        var antes = PedidoDel(new DateOnly(2026, 9, 30), id: 1);
+        var dentro = PedidoDel(new DateOnly(2026, 10, 15), id: 2);
+        var despues = PedidoDel(new DateOnly(2026, 11, 1), id: 3);
+
+        var resultado = FiltroPedidos.EntreFechas([antes, dentro, despues], Desde, Hasta);
+
+        Assert.Equal([dentro], resultado);
+    }
+
+    // CA-04
+    [Fact]
+    public void EntreFechas_DesdePosteriorAHasta_LanzaArgumentException()
+    {
+        var excepcion = Assert.Throws<ArgumentException>(
+            () => FiltroPedidos.EntreFechas([PedidoDel(Desde)], Hasta, Desde));
+
+        Assert.Equal("desde", excepcion.ParamName);
+        Assert.Contains("no puede ser posterior a la fecha hasta", excepcion.Message);
+    }
 }
