@@ -20,8 +20,8 @@ Borra estos comentarios al terminar.
 ## Etapa 2 · Pipeline seguro
 
 - **`ci.yml`:** https://github.com/aemp90/pedidos-web-final/actions/runs/43214122612
-- **`claude.yml` en `main`:** <sí / no>
-- **Revisé:** permisos mínimos ☑ · timeout ☑ · versiones fijas ☑ · token solo como secreto ☐
+- **`claude.yml` en `main`:** sí (PR #1: https://github.com/aemp90/pedidos-web-final/pull/1)
+- **Revisé:** permisos mínimos ☑ · timeout ☑ · versiones fijas ☑ · token solo como secreto ☑
 
 ## Etapa 3 · La falla
 
