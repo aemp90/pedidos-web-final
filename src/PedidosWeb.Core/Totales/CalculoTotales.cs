@@ -17,7 +17,7 @@ public static class CalculoTotales
     public const decimal LimiteVolumenAlto = 1_000_000m;
 
     /// <summary>Desde esta base (inclusive) se aplica el 5 % (D1).</summary>
-    public const decimal LimiteVolumenBajo = 599_999m;
+    public const decimal LimiteVolumenBajo = 500_000m;
 
     public const decimal DescuentoVolumenAlto = 0.08m;
     public const decimal DescuentoVolumenBajo = 0.05m;
