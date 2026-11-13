@@ -1,21 +1,16 @@
 # Registro de calidad · Unidad 6
 
-<!--
-Lo completas tú durante el taller. Frases cortas: lo que hiciste y por qué.
-Borra estos comentarios al terminar.
--->
-
 ## Preparación
 
-- **Tests en `Skip` (pendientes de unidades anteriores):** <ninguno, o cuáles y su motivo>
+- **Tests en `Skip` (pendientes de unidades anteriores):** ninguno.
 
 ## Etapa 1 · Tests que sí prueban
 
-- **Módulo elegido:** <CalculoTotales, ClientesService o FolioFormatter>
-- **Tests que propuso Claude:** <cuántos>
-- **Cambio que hice a mano para probarlos:** <qué línea cambié>
-- **Tests que me quedé:** <cuántos y cuáles>
-- **Tests que borré y por qué:** <el que pasaba con y sin el cambio>
+- **Módulo elegido:** `CalculoTotales`.
+- **Tests que propuso Claude:** 5 (8 casos con los `InlineData`).
+- **Cambio que hice a mano para probarlos:** cambié un valor de `CalculoTotales.cs`; creo que fue el límite del 5 % (de 500.000 a 599.999), pero no recuerdo el valor exacto.
+- **Tests que me quedé:** los 5, en `CalculoTotalesTests.cs` (commit `0ee070c`): `Calcular_BaseUnPesoBajoElUmbral_NoSubeDeTramo`, `Calcular_CategoriaOfeConOtraEscritura_NoEntraEnLaBase`, `Calcular_LineaSinCategoria_EntraEnLaBaseSinFallar`, `Calcular_LineaNula_LanzaArgumentExceptionConElNumeroDeLinea` y `Calcular_ListaNula_LanzaArgumentNullException`.
+- **Tests que borré y por qué:** ninguno; todos fallaron con el cambio a mano.
 
 ## Etapa 2 · Pipeline seguro
 

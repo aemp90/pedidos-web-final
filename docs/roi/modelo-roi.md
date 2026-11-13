@@ -23,8 +23,8 @@ Antes = promedio de las semanas 1-6; Con IA = promedio de las semanas 7-12.
 **Evidencia propia** (una línea por archivo: qué dato aporta):
 
 - `docs/migracion/defectos-corregidos.md` (U5): 2 defectos del legado corregidos en la migración (D1, redondeo de los ,50; D2, umbrales del descuento con `>=`). Cambian 23 de los 60 casos del golden master (13 por D1 y 13 por D2; 3 se repiten: 8, 23 y 42), y la suma de la columna total pasa de 58.202.135 a 57.773.744 (−428.391 pesos). Sin fecha por semana: no se puede ubicar en el piloto.
-- `docs/calidad/registro-u6.md` (U6): una falla provocada a mano dejó 16 de 189 tests en rojo, `@claude` la diagnosticó y se aceptó su corrección (CI en verde, merge `165d3e6`). FALTA la etapa 1 (tests propuestos, guardados y borrados) y no hay tiempos: no aporta horas.
-- `docs/checklist-revision.md` (U7): FALTA. La plantilla está sin completar; no hay PR, hallazgos ni tiempos de revisión.
+- `docs/calidad/registro-u6.md` (U6): una falla provocada a mano dejó 16 de 189 tests en rojo, `@claude` la diagnosticó y se aceptó su corrección (CI en verde, merge `165d3e6`). En la etapa 1, Claude propuso 5 tests de borde para `CalculoTotales` y los 5 se quedaron, porque fallaron con un cambio a mano. No hay tiempos: no aporta horas.
+- `docs/checklist-revision.md` (U7): checklist de revisión con 12 comprobaciones (antes del PR, al revisar, con los hallazgos de la IA y para el merge). PR de HU-03: #5, donde la revisión de la IA no marcó hallazgos y no hubo revisión de personas. FALTAN los tiempos de revisión: no aporta horas.
 - `docs/gobernanza/politica-ia.md` (U8): 1 de 9 controles probado (`guardian.sh` bloqueó la lectura de `.env` por la shell el 2026-11-12); los otros 8 están PENDIENTE. Aporta riesgo, no cifras de ahorro.
 - `docs/adopcion/plan-evolucion.md` (U9): Pedidos Web está en nivel 3 (Equipo con reglas): Claude Code en 86 de 107 PR (80 %) y `tasa_aceptacion` de 0,74 a 0,78 en 8 semanas (fuente: `docs/adopcion/analytics-ficticio.csv`). Ese CSV es otro período y no se cruza con `datos-piloto.csv`.
 

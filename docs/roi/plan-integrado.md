@@ -49,7 +49,7 @@ Se siguen las mismas mediciones del piloto, cada mes, con estas metas:
 | Change fail rate | 33,3 % | 33,3 % o menos |
 | Defectos escapados por semana | 1,5 | 1,5 o menos |
 
-FALTA: la etapa 1 de `registro-u6.md` y el checklist de revisión de la U7 no están completos. · Respaldo: `docs/calidad/registro-u6.md` (U6) · `docs/checklist-revision.md` (U7)
+Cada cambio pasa por tests comprobados a mano y por el checklist de revisión antes del merge, que exige la aprobación de una persona además de la revisión de la IA. · Respaldo: `docs/calidad/registro-u6.md` (U6) · `docs/checklist-revision.md` (U7)
 
 ### Gobernanza
 Se llevan a los otros equipos la política de datos que nunca entran a la IA (secretos, cadenas de conexión, datos reales de clientes), las reglas de `.claude/settings.json` y el hook `guardian.sh`. Hoy solo 1 de 9 controles está probado; los otros 8 deben probarse antes de escalar. · Respaldo: `docs/gobernanza/politica-ia.md` (U8)
