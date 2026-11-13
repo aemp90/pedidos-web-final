@@ -1,0 +1,52 @@
+openapi: 3.1.0
+info:
+  title: "{{NOMBRE_API}}"
+  version: "{{VERSION}}"
+  description: >-
+    {{DESCRIPCION_EN_UNA_O_DOS_FRASES}}
+    Contrato técnico de la API: cambia antes que el código. Las reglas de negocio y el
+    comportamiento esperado están en _planificacion/20_especificaciones/.
+servers:
+  - url: "{{URL_LOCAL}}"
+    description: Desarrollo local
+tags:
+  - name: "{{RECURSO}}"
+    description: "{{PARA_QUE_SIRVE_EL_RECURSO}}"
+paths:
+  "{{RUTA}}":
+    get:
+      operationId: "{{OPERATION_ID}}"
+      tags: ["{{RECURSO}}"]
+      summary: "{{RESUMEN}}"
+      responses:
+        "200":
+          description: "{{DESCRIPCION_RESPUESTA}}"
+        default:
+          $ref: "#/components/responses/Error"
+components:
+  securitySchemes:
+    "{{ESQUEMA_DE_SEGURIDAD}}":
+      type: http
+      scheme: bearer
+  schemas:
+    Error:
+      type: object
+      required: [codigo, mensaje]
+      properties:
+        codigo:
+          type: string
+          description: Código estable del error, para que el consumidor lo pueda manejar.
+        mensaje:
+          type: string
+          description: Mensaje legible, en el idioma del proyecto si llega al usuario.
+        detalles:
+          type: array
+          items:
+            type: object
+  responses:
+    Error:
+      description: Error con el formato común del proyecto.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

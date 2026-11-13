@@ -1,0 +1,80 @@
+{
+  "descripcion": "Backend pequeño con Node.js, Express y PNPM.",
+  "allow": {
+    "comandos": [
+      "Bash(pnpm install)",
+      "Bash(pnpm dev)",
+      "Bash(pnpm run dev)",
+      "Bash(pnpm build)",
+      "Bash(pnpm run build)",
+      "Bash(pnpm test)",
+      "Bash(pnpm run test)",
+      "Bash(pnpm test *)",
+      "Bash(pnpm format)",
+      "Bash(pnpm run format)",
+      "Bash(pnpm format:check)",
+      "Bash(pnpm run format:check)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm run lint)",
+      "Bash(pnpm list *)",
+      "Bash(pnpm outdated)",
+      "Bash(pnpm --version)",
+      "Bash(node --version)",
+      "Bash(pnpm start)",
+      "Bash(pnpm run start)",
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm run typecheck)"
+    ],
+    "edicion": [
+      "Edit(/src/**)",
+      "Edit(/test/**)",
+      "Edit(/tests/**)"
+    ],
+    "web": [
+      "WebFetch(domain:expressjs.com)",
+      "WebFetch(domain:nodejs.org)",
+      "WebFetch(domain:developer.mozilla.org)"
+    ]
+  },
+  "ask": {
+    "comandos": [
+      "Bash(pnpm add *)",
+      "Bash(pnpm remove *)",
+      "Bash(pnpm update *)",
+      "Bash(pnpm up *)",
+      "Bash(pnpm dlx *)",
+      "Bash(pnpm approve-builds *)",
+      "Bash(npx *)",
+      "Bash(pnpm prisma migrate dev *)",
+      "Bash(pnpm drizzle-kit migrate *)"
+    ],
+    "edicion": [
+      "Edit(/package.json)",
+      "Edit(/pnpm-workspace.yaml)",
+      "Edit(/tsconfig.json)",
+      "Edit(/.nvmrc)",
+      "Edit(/.prettierrc.json)"
+    ]
+  },
+  "deny": {
+    "comandos": [
+      "Bash(npm install *)",
+      "Bash(npm publish *)",
+      "Bash(yarn *)",
+      "Bash(pnpm publish *)",
+      "Bash(pnpm dlx wrangler *)",
+      "Bash(pnpm dlx vercel *)",
+      "Bash(pnpm dlx netlify-cli *)",
+      "Bash(npx wrangler *)",
+      "Bash(npx vercel *)",
+      "Bash(npx netlify-cli *)",
+      "Bash(pnpm prisma migrate deploy *)",
+      "Bash(pnpm prisma migrate reset *)",
+      "Bash(pnpm prisma db push *)",
+      "Bash(pnpm drizzle-kit push *)",
+      "Bash(psql *)",
+      "Bash(mysql *)",
+      "Bash(mongosh *)"
+    ]
+  }
+}

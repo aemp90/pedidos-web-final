@@ -1,0 +1,8 @@
+{
+  "name": "pedidos-playbook",
+  "version": "1.0.0",
+  "description": "Forma de trabajar de Pedidos Web: subagente revisor, Skills documentar-modulo y planificador-proyectos-web, hook guardián, plantilla de AGENTS.md y MCP claude-academy de solo lectura",
+  "author": { "name": "amontilla" },
+  "license": "MIT",
+  "keywords": ["playbook", "revisor", "gobernanza", "pedidos-web"]
+}

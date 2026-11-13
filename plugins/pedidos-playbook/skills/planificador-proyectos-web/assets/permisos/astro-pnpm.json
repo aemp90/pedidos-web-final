@@ -1,0 +1,73 @@
+{
+  "descripcion": "Frontend con Astro, Tailwind CSS y PNPM.",
+  "allow": {
+    "comandos": [
+      "Bash(pnpm install)",
+      "Bash(pnpm dev)",
+      "Bash(pnpm run dev)",
+      "Bash(pnpm build)",
+      "Bash(pnpm run build)",
+      "Bash(pnpm test)",
+      "Bash(pnpm run test)",
+      "Bash(pnpm test *)",
+      "Bash(pnpm format)",
+      "Bash(pnpm run format)",
+      "Bash(pnpm format:check)",
+      "Bash(pnpm run format:check)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm run lint)",
+      "Bash(pnpm list *)",
+      "Bash(pnpm outdated)",
+      "Bash(pnpm --version)",
+      "Bash(node --version)",
+      "Bash(pnpm preview)",
+      "Bash(pnpm run preview)",
+      "Bash(pnpm check)",
+      "Bash(pnpm run check)",
+      "Bash(pnpm astro check)",
+      "Bash(pnpm astro check *)"
+    ],
+    "edicion": [
+      "Edit(/src/**)",
+      "Edit(/public/**)"
+    ],
+    "web": [
+      "WebFetch(domain:docs.astro.build)",
+      "WebFetch(domain:tailwindcss.com)",
+      "WebFetch(domain:developer.mozilla.org)"
+    ]
+  },
+  "ask": {
+    "comandos": [
+      "Bash(pnpm add *)",
+      "Bash(pnpm remove *)",
+      "Bash(pnpm update *)",
+      "Bash(pnpm up *)",
+      "Bash(pnpm dlx *)",
+      "Bash(pnpm approve-builds *)",
+      "Bash(npx *)"
+    ],
+    "edicion": [
+      "Edit(/package.json)",
+      "Edit(/pnpm-workspace.yaml)",
+      "Edit(/tsconfig.json)",
+      "Edit(/.nvmrc)",
+      "Edit(/.prettierrc.json)",
+      "Edit(/astro.config.*)"
+    ]
+  },
+  "deny": {
+    "comandos": [
+      "Bash(npm install *)",
+      "Bash(npm publish *)",
+      "Bash(yarn *)",
+      "Bash(pnpm publish *)",
+      "Bash(pnpm dlx wrangler *)",
+      "Bash(pnpm dlx vercel *)",
+      "Bash(pnpm dlx netlify-cli *)",
+      "Bash(npx wrangler *)",
+      "Bash(npx vercel *)",
+      "Bash(npx netlify-cli *)"
+    ]
+  }
+}

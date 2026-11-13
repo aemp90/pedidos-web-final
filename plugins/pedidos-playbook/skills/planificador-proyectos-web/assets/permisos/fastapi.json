@@ -1,0 +1,82 @@
+{
+  "descripcion": "API o servicio con Python y FastAPI (uv o pip), con Alembic si hay base de datos.",
+  "allow": {
+    "comandos": [
+      "Bash(fastapi dev *)",
+      "Bash(uv run fastapi dev *)",
+      "Bash(uvicorn *)",
+      "Bash(uv run uvicorn *)",
+      "Bash(alembic current)",
+      "Bash(alembic current *)",
+      "Bash(uv run alembic current)",
+      "Bash(uv run alembic current *)",
+      "Bash(alembic history)",
+      "Bash(alembic history *)",
+      "Bash(uv run alembic history)",
+      "Bash(uv run alembic history *)",
+      "Bash(alembic revision --autogenerate *)",
+      "Bash(alembic revision --autogenerate * *)",
+      "Bash(uv run alembic revision --autogenerate *)",
+      "Bash(uv run alembic revision --autogenerate * *)",
+      "Bash(uv sync)",
+      "Bash(uv run pytest)",
+      "Bash(uv run pytest *)",
+      "Bash(pytest)",
+      "Bash(pytest *)",
+      "Bash(python -m pytest *)",
+      "Bash(uv run ruff check *)",
+      "Bash(uv run ruff format *)",
+      "Bash(ruff check *)",
+      "Bash(ruff format *)",
+      "Bash(python --version)",
+      "Bash(uv --version)",
+      "Bash(pip list)",
+      "Bash(pip freeze)"
+    ],
+    "edicion": [
+      "Edit(/app/**)",
+      "Edit(/src/**)",
+      "Edit(/tests/**)"
+    ],
+    "web": [
+      "WebFetch(domain:fastapi.tiangolo.com)",
+      "WebFetch(domain:docs.pydantic.dev)",
+      "WebFetch(domain:docs.python.org)"
+    ]
+  },
+  "ask": {
+    "comandos": [
+      "Bash(uv add *)",
+      "Bash(uv remove *)",
+      "Bash(uv lock *)",
+      "Bash(pip install *)",
+      "Bash(pip uninstall *)",
+      "Bash(python -m pip install *)",
+      "Bash(alembic upgrade)",
+      "Bash(alembic upgrade *)",
+      "Bash(uv run alembic upgrade)",
+      "Bash(uv run alembic upgrade *)",
+      "Bash(alembic downgrade)",
+      "Bash(alembic downgrade *)",
+      "Bash(uv run alembic downgrade)",
+      "Bash(uv run alembic downgrade *)"
+    ],
+    "edicion": [
+      "Edit(/alembic/**)",
+      "Edit(/migrations/**)",
+      "Edit(/alembic.ini)",
+      "Edit(/pyproject.toml)",
+      "Edit(/requirements*.txt)"
+    ]
+  },
+  "deny": {
+    "comandos": [
+      "Bash(pip download *)",
+      "Bash(twine *)",
+      "Bash(uv publish *)",
+      "Bash(psql *)",
+      "Bash(mysql *)",
+      "Bash(mongosh *)"
+    ]
+  }
+}
