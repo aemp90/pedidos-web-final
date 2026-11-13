@@ -1,0 +1,13 @@
+semana,periodo,despliegues,lead_time_dias,cambios_con_falla,horas_recuperacion,defectos_escapados,horas_retrabajo,horas_ahorradas_equipo
+1,antes,2,6.5,1,6,2,12,0
+2,antes,2,7.0,1,5,2,11,0
+3,antes,2,6.0,1,7,3,13,0
+4,antes,2,6.5,0,0,2,12,0
+5,antes,2,7.0,1,6,2,12,0
+6,antes,2,6.5,1,6,1,12,0
+7,con-ia,2,7.0,2,8,3,15,3
+8,con-ia,2,6.5,1,6,2,14,4
+9,con-ia,3,5.0,1,4,1,10,9
+10,con-ia,3,4.5,1,3,1,9,11
+11,con-ia,4,4.0,0,0,1,8,12
+12,con-ia,4,4.0,1,3,1,8,12
