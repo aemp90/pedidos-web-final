@@ -4,7 +4,7 @@
 > Fuente de datos: `docs/roi/datos-piloto.csv` (equipo Pedidos Web de 6 devs; semanas 1-6 antes, 7-12 con IA; datos ficticios) y tus entregables de las unidades 5 a 9.
 > Regla: ningún número sin su fuente o su supuesto. Si un dato no está, escribe FALTA.
 
-**Autor:** <tu nombre> · **Fecha:** <fecha> · **Horizonte:** <meses>
+**Autor:** Andres · **Fecha:** 2026-11-13 · **Horizonte:** 12 meses
 
 ## 1. Datos (etapa 1)
 
@@ -36,21 +36,30 @@ Tipos: **oficial** (publicado, con fecha) · **medido** (dato del piloto) · **e
 
 | Supuesto | Valor | Tipo | Fuente |
 |---|---|---|---|
-| Asiento | | | |
-| Capacitación | | | |
-| Curva de adopción | | | |
-| Valor hora | | | |
-| Horas ahorradas | | | |
-| Defectos evitados | | | |
+| Equipo | 6 devs | medido | `docs/roi/datos-piloto.csv` (encabezado del modelo: equipo Pedidos Web de 6 devs) |
+| Asiento | USD 25 por dev al mes (Team Standard, pago mensual; USD 20 con pago anual) | oficial | [claude.com/pricing](https://claude.com/pricing) y [support.claude.com · What is the Team plan?](https://support.claude.com/en/articles/9266767-what-is-the-team-plan), consultados el 2026-11-13. Precio para EE. UU., sin impuestos. |
+| Capacitación | 16 h por dev | estimado | Juicio del equipo: talleres y práctica del curso. FALTA el registro real de horas. |
+| Curva de adopción | 9 h del equipo, una sola vez | medido | `datos-piloto.csv`, semanas 7-8 contra el promedio de las semanas 1-6: retrabajo (15 − 12) + (14 − 12) = 5 h; recuperación (8 + 6) − 2 × 5,0 = 4 h. |
+| Valor hora | USD 20 por hora de dev | estimado | Juicio del equipo. FALTA el costo hora real de RR. HH. |
+| Semanas trabajadas al año | 48 | estimado | 52 semanas menos 4 de vacaciones y feriados. |
+| Horas ahorradas (conservador) | 8,5 h por semana (equipo) | medido (reportado) | `datos-piloto.csv`, `horas_ahorradas_equipo`, semanas 7-12: 51 / 6. Incluye la curva. |
+| Horas ahorradas (optimista) | 11,0 h por semana (equipo) | medido (reportado) | `datos-piloto.csv`, `horas_ahorradas_equipo`, semanas 9-12: (9 + 11 + 12 + 12) / 4 = 44 / 4. Sin la curva. |
+| Defectos evitados (conservador) | 0,5 por semana | medido | `datos-piloto.csv`, `defectos_escapados`: 2,0 (semanas 1-6) − 1,5 (semanas 7-12). |
+| Defectos evitados (optimista) | 1,0 por semana | medido | `datos-piloto.csv`, `defectos_escapados`: 2,0 (semanas 1-6) − 1,0 (semanas 9-12: 4 / 4). |
+| Costo de un defecto en producción | 6 h × USD 20 = USD 120 | estimado | Usa como referencia un dato medido: 6,0 h de recuperación por falla, semanas 1-6 (30 h / 5 fallas). FALTA el costo real de un defecto escapado. |
 
 ## 3. Costos
 
+Los costos son los mismos en ambos escenarios; solo cambian los beneficios.
+
 | Costo | Cálculo | USD |
 |---|---|---|
-| Asientos | | |
-| Capacitación | | |
-| Curva de adopción | | |
-| **Total** | | |
+| Asientos | 25 × 6 devs × 12 meses | 1.800 |
+| Capacitación | 16 h × 6 devs × 20 | 1.920 |
+| Curva de adopción | 9 h × 20 | 180 |
+| **Total** | 1.800 + 1.920 + 180 | **3.900** |
+
+Con pago anual los asientos bajan a 20 × 6 × 12 = 1.440 y el total queda en 3.540.
 
 ## 4. Beneficios y escenarios
 
@@ -58,24 +67,44 @@ ROI = (beneficio − costo) / costo
 
 | | Conservador | Optimista |
 |---|---|---|
-| Horas ahorradas × valor hora | | |
-| Defectos evitados × costo en producción | | |
-| **Beneficio total** | | |
-| **ROI** | | |
+| Horas ahorradas × valor hora | 8,5 × 48 = 408 h × 20 = 8.160 | 11,0 × 48 = 528 h × 20 = 10.560 |
+| Defectos evitados × costo en producción | 0,5 × 48 = 24 × 120 = 2.880 | 1,0 × 48 = 48 × 120 = 5.760 |
+| **Beneficio total** | 8.160 + 2.880 = **11.040** | 10.560 + 5.760 = **16.320** |
+| **ROI** | (11.040 − 3.900) / 3.900 = 7.140 / 3.900 = **183 %** | (16.320 − 3.900) / 3.900 = 12.420 / 3.900 = **318 %** |
+
+**ROI a 12 meses: entre 183 % y 318 %.**
 
 ## 5. Sensibilidad
 
-**Supuesto que más pesa:** <cuál y por qué>
+**Supuesto que más pesa:** las horas ahorradas. Son el 74 % del beneficio conservador (8.160 / 11.040), las reporta el propio equipo (no las mide una herramienta) y vienen de solo 6 semanas proyectadas a 48. El valor hora también pesa, pero mueve beneficios y costos a la vez.
 
-| Si… | ROI |
-|---|---|
-| El ahorro es la mitad del conservador | |
+| Si… | Cálculo | ROI |
+|---|---|---|
+| El ahorro es la mitad del conservador | Horas: 204 h × 20 = 4.080. Beneficio: 4.080 + 2.880 = 6.960. ROI: (6.960 − 3.900) / 3.900 = 3.060 / 3.900 | **78 %** |
+| El ahorro y los defectos evitados son la mitad del conservador | Beneficio: 4.080 + 1.440 = 5.520. ROI: (5.520 − 3.900) / 3.900 = 1.620 / 3.900 | **42 %** |
+| El valor hora es USD 15 (conservador) | Beneficio: 408 × 15 + 24 × 90 = 6.120 + 2.160 = 8.280. Costo: 1.800 + 96 × 15 + 9 × 15 = 1.800 + 1.440 + 135 = 3.375. ROI: (8.280 − 3.375) / 3.375 = 4.905 / 3.375 | **145 %** |
+
+Aun con el ahorro a la mitad, el ROI sigue siendo positivo.
 
 ## 6. Punto de equilibrio (Tu reto)
 
-<Escríbelo tú: qué despejas, el resultado y una línea para la gerencia.>
+**Qué despejo:** las horas ahorradas por dev al mes que dejan el ROI en 0, es decir, donde el beneficio iguala al costo.
+
+**Qué dejo fijo:** el costo total (USD 3.900), el valor hora (USD 20) y el equipo (6 devs, 12 meses). Los defectos evitados **no se cuentan** (valen 0): el equilibrio depende solo de las horas, sin apoyarse en el costo por defecto, que es estimado.
+
+**Cálculo:**
+
+- ROI = 0 ⇒ beneficio = costo ⇒ H × 20 = 3.900
+- H = 3.900 / 20 = 195 h al año (equipo)
+- Por dev al mes: 195 / 6 devs / 12 meses = **2,7 h**
+- Medido en el piloto (conservador): 8,5 h por semana × 48 / 12 / 6 = 5,67 h por dev al mes, unas **2 veces** el equilibrio (5,67 / 2,71 = 2,1).
+
+**Para la gerencia:** basta que cada dev ahorre 2,7 h al mes para cubrir el costo; el piloto muestra 5,7.
 
 ## 7. Limitaciones
 
 - Los datos son ficticios y la muestra es pequeña: este ROI es un ejercicio de método.
-- <otra limitación>
+- Las horas ahorradas son autorreportadas y salen de 6 semanas; el modelo supone que se mantienen las 48 semanas del año.
+- La baja del retrabajo (12,0 → 10,7 h por semana) no se suma como beneficio aparte, para no contarla dos veces con las horas ahorradas que reporta el equipo.
+- El valor hora, la capacitación y el costo de un defecto son estimados: FALTAN los datos reales de RR. HH. y del registro de incidentes.
+- La curva de adopción solo cuenta las horas extra medidas (retrabajo y recuperación); no incluye la productividad perdida mientras el equipo aprendía.
