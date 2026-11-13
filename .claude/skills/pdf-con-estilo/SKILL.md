@@ -27,6 +27,7 @@ Convierte un `.md` en un `.pdf` que siempre se ve igual, sea cual sea el documen
 - **No toques `assets/plantilla.html` para un documento puntual.** Todos los PDF comparten el mismo diseño; si hay que cambiarlo, se cambia para todos y en un commit aparte.
 - No modifiques el `.md` de entrada para «que se vea mejor» sin pedirlo: el PDF refleja el documento tal cual.
 - El título del PDF es el primer `# ` del Markdown; usa `--titulo` solo si no tiene uno.
-- El HTML crudo dentro del Markdown se muestra como texto (así `<tu nombre>` no desaparece).
+- El HTML crudo dentro del Markdown se muestra como texto (así `<tu nombre>` no desaparece); los comentarios `<!-- -->` no salen en el PDF.
+- Las sublistas indentadas con 2 espacios (estilo GitHub) se anidan bien: el script ajusta la indentación.
 - No dejes archivos intermedios (`.html`) dentro del repo.
 - Escribe los mensajes en español de Chile.

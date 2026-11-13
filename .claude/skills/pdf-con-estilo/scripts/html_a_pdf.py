@@ -59,9 +59,47 @@ def extraer_titulo(texto_md: str, respaldo: str) -> str:
     return coincidencia.group(1).strip() if coincidencia else respaldo
 
 
+RE_COMENTARIO = re.compile(r"<!--.*?-->", flags=re.DOTALL)
+RE_CERCA = re.compile(r"^\s*(```|~~~)")
+RE_ITEM_INDENTADO = re.compile(r"^( +)([-*+]|\d+[.)])\s")
+
+
+def normalizar_markdown(texto_md: str) -> str:
+    """Ajusta el Markdown de GitHub a lo que espera la librería `markdown`.
+
+    - Quita los comentarios HTML (<!-- -->): son notas para quien edita, no van al PDF.
+    - Si las sublistas están indentadas con 2 espacios (estilo GitHub), duplica esa
+      indentación, porque la librería `markdown` exige 4 para anidar una lista.
+    Ninguno de los dos cambios toca los bloques de código con ``` o ~~~.
+    """
+    lineas = texto_md.splitlines()
+    en_codigo = False
+    sangrias = []
+    for linea in lineas:
+        if RE_CERCA.match(linea):
+            en_codigo = not en_codigo
+        elif not en_codigo and (item := RE_ITEM_INDENTADO.match(linea)):
+            sangrias.append(len(item.group(1)))
+    duplicar = bool(sangrias) and min(sangrias) < 4
+
+    resultado = []
+    en_codigo = False
+    for linea in lineas:
+        if RE_CERCA.match(linea):
+            en_codigo = not en_codigo
+        elif not en_codigo and duplicar and (item := RE_ITEM_INDENTADO.match(linea)):
+            linea = " " * (len(item.group(1)) * 2) + linea[len(item.group(1)):]
+        resultado.append(linea)
+
+    # Los comentarios se quitan solo fuera de los bloques de código.
+    partes = re.split(r"(^\s*(?:```|~~~).*?^\s*(?:```|~~~)[^\n]*$)", "\n".join(resultado),
+                      flags=re.MULTILINE | re.DOTALL)
+    return "".join(p if i % 2 else RE_COMENTARIO.sub("", p) for i, p in enumerate(partes))
+
+
 def markdown_a_html(texto_md: str, plantilla: str, titulo: str) -> str:
     contenido = markdown.markdown(
-        texto_md,
+        normalizar_markdown(texto_md),
         extensions=["tables", "fenced_code", "sane_lists", SinHtmlCrudo()],
         output_format="html5",
     )
