@@ -1,0 +1,98 @@
+{
+  "descripcion": "Reglas comunes a todo proyecto: Git, sistema de archivos, planificación, documentos protegidos, secretos y hosting.",
+  "allow": {
+    "git": [
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)"
+    ],
+    "sistema": [
+      "Bash(ls *)"
+    ],
+    "edicion": [
+      "Edit(/_planificacion/00_producto/**)",
+      "Edit(/_planificacion/10_epicas/**)",
+      "Edit(/_planificacion/20_especificaciones/**)",
+      "Edit(/_planificacion/99_bitacora/**)"
+    ]
+  },
+  "ask": {
+    "git": [
+      "Bash(git branch)",
+      "Bash(git branch *)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git stash *)",
+      "Bash(git add *)",
+      "Bash(git restore *)",
+      "Bash(git fetch *)"
+    ],
+    "sistema": [
+      "Bash(rm *)",
+      "Bash(mv *)"
+    ],
+    "edicion": [
+      "Edit(/.gitignore)",
+      "Edit(/.gitattributes)"
+    ]
+  },
+  "deny": {
+    "git": [
+      "Bash(git commit)",
+      "Bash(git commit *)",
+      "Bash(git push)",
+      "Bash(git push *)",
+      "Bash(git merge)",
+      "Bash(git merge *)",
+      "Bash(git pull)",
+      "Bash(git pull *)",
+      "Bash(git rebase *)",
+      "Bash(git cherry-pick *)",
+      "Bash(git revert *)",
+      "Bash(git reset *)",
+      "Bash(git tag *)",
+      "Bash(git clean *)",
+      "Bash(git remote *)",
+      "Bash(git config *)",
+      "Bash(git branch -d *)",
+      "Bash(git branch -D *)",
+      "Bash(git branch --delete *)",
+      "Bash(git -C *)",
+      "Bash(gh pr merge *)",
+      "Bash(gh repo *)",
+      "Bash(gh release *)"
+    ],
+    "sistema": [
+      "Bash(sudo *)",
+      "Bash(rm -rf *)",
+      "Bash(wrangler *)",
+      "Bash(vercel *)",
+      "Bash(netlify *)",
+      "Bash(railway *)",
+      "Bash(flyctl *)",
+      "Bash(heroku *)",
+      "Bash(gcloud *)",
+      "Bash(aws *)",
+      "Bash(az *)",
+      "Bash(docker push *)",
+      "Bash(kubectl *)"
+    ],
+    "edicion": [
+      "Edit(/AGENTS.md)",
+      "Edit(/DESIGN.md)",
+      "Edit(/README.md)",
+      "Edit(/_planificacion/README.md)",
+      "Edit(/.claude/**)",
+      "Edit(/.git/**)",
+      "Edit(/.env)",
+      "Edit(/.env.*)"
+    ],
+    "lectura": [
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  }
+}

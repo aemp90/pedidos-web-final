@@ -1,0 +1,88 @@
+{
+  "descripcion": "Backend robusto y orientado a contenedores con Java y Quarkus (Maven o Gradle con wrapper).",
+  "allow": {
+    "comandos": [
+      "Bash(./mvnw quarkus:dev)",
+      "Bash(./mvnw quarkus:dev *)",
+      "Bash(./gradlew quarkusDev)",
+      "Bash(./gradlew quarkusDev *)",
+      "Bash(./mvnw test)",
+      "Bash(./mvnw test *)",
+      "Bash(./mvnw verify)",
+      "Bash(./mvnw verify *)",
+      "Bash(./mvnw package)",
+      "Bash(./mvnw package *)",
+      "Bash(./mvnw compile)",
+      "Bash(./mvnw compile *)",
+      "Bash(./mvnw dependency:tree)",
+      "Bash(./mvnw dependency:tree *)",
+      "Bash(./gradlew test)",
+      "Bash(./gradlew test *)",
+      "Bash(./gradlew build)",
+      "Bash(./gradlew build *)",
+      "Bash(./gradlew check)",
+      "Bash(./gradlew check *)",
+      "Bash(./gradlew dependencies)",
+      "Bash(./gradlew dependencies *)",
+      "Bash(java -version)",
+      "Bash(./mvnw -v)",
+      "Bash(./gradlew --version)"
+    ],
+    "edicion": [
+      "Edit(/src/main/java/**)",
+      "Edit(/src/test/**)"
+    ],
+    "web": [
+      "WebFetch(domain:quarkus.io)",
+      "WebFetch(domain:docs.oracle.com)"
+    ]
+  },
+  "ask": {
+    "comandos": [
+      "Bash(mvn *)",
+      "Bash(gradle *)",
+      "Bash(./mvnw flyway:migrate)",
+      "Bash(./mvnw flyway:migrate *)",
+      "Bash(./mvnw liquibase:update)",
+      "Bash(./mvnw liquibase:update *)",
+      "Bash(./gradlew flywayMigrate)",
+      "Bash(./gradlew flywayMigrate *)",
+      "Bash(./gradlew update)",
+      "Bash(./gradlew update *)",
+      "Bash(./mvnw quarkus:deploy)",
+      "Bash(./mvnw quarkus:deploy *)",
+      "Bash(./mvnw quarkus:image-push)",
+      "Bash(./mvnw quarkus:image-push *)"
+    ],
+    "edicion": [
+      "Edit(/pom.xml)",
+      "Edit(/build.gradle)",
+      "Edit(/build.gradle.kts)",
+      "Edit(/settings.gradle)",
+      "Edit(/settings.gradle.kts)",
+      "Edit(/src/main/resources/application*)",
+      "Edit(/src/main/resources/db/migration/**)"
+    ]
+  },
+  "deny": {
+    "comandos": [
+      "Bash(./mvnw deploy)",
+      "Bash(./mvnw deploy *)",
+      "Bash(./mvnw release:*)",
+      "Bash(./mvnw release:* *)",
+      "Bash(./mvnw flyway:clean)",
+      "Bash(./mvnw flyway:clean *)",
+      "Bash(./mvnw liquibase:dropAll)",
+      "Bash(./mvnw liquibase:dropAll *)",
+      "Bash(./gradlew publish)",
+      "Bash(./gradlew publish *)",
+      "Bash(./gradlew flywayClean)",
+      "Bash(./gradlew flywayClean *)",
+      "Bash(./gradlew dropAll)",
+      "Bash(./gradlew dropAll *)",
+      "Bash(psql *)",
+      "Bash(mysql *)",
+      "Bash(sqlplus *)"
+    ]
+  }
+}

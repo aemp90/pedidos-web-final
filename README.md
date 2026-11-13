@@ -2,7 +2,7 @@
 
 Portal web de pedidos de la distribuidora. Es la modernización de **Pedidos Legado**, un sistema de escritorio hecho en Delphi con DBISAM que la empresa usa hace 18 años.
 
-Este repositorio es el **caso hilo** del curso *Desarrollando con IA* (Vela LATAM). Crece unidad a unidad: la biblioteca de dominio (Unidad 1), una API en ASP.NET Core con 45 pedidos de ejemplo (Unidad 2), las líneas de cada pedido y un `ClientesService` heredado (Unidad 3), el código de Pedidos Legado para diagnosticarlo sin tocarlo (Unidad 4), el golden master para migrar el cálculo de totales (Unidad 5), el pipeline de CI con Claude diagnosticando las fallas (Unidad 6), el proceso de code review (Unidad 7) y, en la **Unidad 8**, la **gobernanza del uso de IA**: una política que se cumple por configuración, no de memoria.
+Este repositorio es el **caso hilo** del curso *Desarrollando con IA* (Vela LATAM). Crece unidad a unidad: la biblioteca de dominio (Unidad 1), una API en ASP.NET Core con 45 pedidos de ejemplo (Unidad 2), las líneas de cada pedido y un `ClientesService` heredado (Unidad 3), el código de Pedidos Legado para diagnosticarlo sin tocarlo (Unidad 4), el golden master para migrar el cálculo de totales (Unidad 5), el pipeline de CI con Claude diagnosticando las fallas (Unidad 6), el proceso de code review (Unidad 7), la gobernanza del uso de IA (Unidad 8) y, en la **Unidad 9**, la **adopción en toda la BU**: tu forma de trabajar empaquetada como un plugin que otro equipo instala con un comando, y un plan de evolución en PDF.
 
 > Todo el contenido es ficticio y tiene fines educativos.
 
@@ -14,9 +14,10 @@ Este repositorio es el **caso hilo** del curso *Desarrollando con IA* (Vela LATA
 | C# | el que trae el SDK | Lenguaje del proyecto |
 | xUnit | 2.9 | Tests |
 | JetBrains Rider | la versión vigente | IDE del curso |
-| Claude Code | 2.1.277 o superior, con tu Claude Pro | Agente de código (lee `AGENTS.md`) |
+| Claude Code | 2.1.281 o superior, con tu cuenta Claude Team | Agente de código, plugins y marketplaces |
+| Python | 3 con Playwright y Chromium | El script de tu Skill `pdf-con-estilo` (U9) |
 | Git Bash (solo Windows) | el que trae Git for Windows | Claude Code corre los hooks con bash |
-| GitHub Actions | runners estándar (gratis en repos públicos) | CI y revisión en cada PR |
+| GitHub | repo **público** | Tu repo es también tu marketplace |
 | Delphi 7 + DBISAM 4 | solo lectura · no se instala | El sistema legado que migras por partes |
 
 ## Estructura
@@ -26,195 +27,197 @@ pedidos-web/
 ├── AGENTS.md                         ← el tuyo (lo escribiste en la U2)
 ├── REVIEW.md                         ← U7
 ├── PedidosWeb.sln
-├── .env                              ← U8: falso y solo local (lo ignora .gitignore)
+├── .claude-plugin/marketplace.json   ← U9: lo creas tú en la etapa 2
+├── plugins/pedidos-playbook/         ← U9: lo creas tú en la etapa 2
 ├── .claude/
-│   ├── settings.json                 ← U4: deny de legado/ · U5: hook PostToolUse · U8: le sumas reglas (etapa 2)
-│   ├── hooks/guardian.sh             ← U8: lo creas tú en la etapa 2
-│   └── agents/                       ← analista-legado (U4) y revisor (U7)
-├── .github/
-│   ├── workflows/                    ← U6 y U7
-│   ├── pull_request_template.md      ← U7
-│   └── dependabot.yml                ← U8: tu reto
+│   ├── settings.json                 ← U4, U5 y U8 (no se toca en la U9)
+│   ├── hooks/guardian.sh             ← U8
+│   ├── agents/                       ← analista-legado (U4) y revisor (U7)
+│   └── skills/                       ← documentar-modulo (U3) · pdf-con-estilo (U9: etapa 3)
+├── .github/                          ← U6, U7 y U8
 ├── src/  ·  tests/
-├── legado/                           ← U4: código de Pedidos Legado, solo lectura
-├── migracion/                        ← U5: el golden master
+├── legado/                           ← U4: solo lectura
+├── migracion/                        ← U5
 ├── docs/
-│   ├── diagnostico/  ·  migracion/  ·  calidad/  ·  checklist-revision.md
-│   └── gobernanza/                   ← U8: dos plantillas                                    (nuevo)
-│       ├── auditoria-legado.md
-│       └── politica-ia.md
+│   ├── diagnostico/  ·  migracion/  ·  calidad/  ·  gobernanza/  ·  checklist-revision.md
+│   └── adopcion/                     ← U9: el CSV y una plantilla                           (nuevo)
+│       ├── analytics-ficticio.csv
+│       └── plan-evolucion.md
 └── specs/
 ```
 
-## Cómo empezar la Unidad 8
+## Cómo empezar la Unidad 9
+
+### Antes de la clase: Playwright
+
+Tu Skill de PDF usa Playwright. Instálalo antes de llegar (tarda unos minutos):
+
+```bash
+# macOS, Linux, WSL o Git Bash
+python3 -m pip install playwright markdown
+python3 -m playwright install chromium
+```
+
+```powershell
+# Windows PowerShell
+py -m pip install playwright markdown
+py -m playwright install chromium
+```
 
 ### A. Ya tienes tu repo `pedidos-web` (lo normal)
 
-**No copies la carpeta completa**: pisarías tu `README.md`, tu `AGENTS.md`, tu `.claude/settings.json` y tu trabajo de las unidades anteriores. La U8 solo **suma** una carpeta: `docs/gobernanza/`, con dos plantillas. No reemplaza nada.
+**No copies la carpeta completa**: pisarías tu `README.md`, tu `AGENTS.md`, tu `.claude/` y tu trabajo de las unidades anteriores. La U9 solo **suma** una carpeta: `docs/adopcion/`, con el CSV y una plantilla. No reemplaza nada.
 
 La forma recomendada es pedírselo a Claude Code, abierto en tu `pedidos-web`:
 
-> Trae a pedidos-web solo lo nuevo de la Unidad 8 desde el repo de material. No toques nada más.
+> Trae a mi repo pedidos-web lo nuevo de la Unidad 9: docs/adopcion/analytics-ficticio.csv y docs/adopcion/plan-evolucion.md. No toques ningún otro archivo y muéstrame el diff antes del commit.
 
 Si prefieres hacerlo tú, trabaja en la carpeta que contiene tu `pedidos-web` y el material del curso, uno al lado del otro:
 
 ```bash
 # macOS, Linux o WSL
 cd material-curso-ia-desarrolladores && git pull && cd ..
-U8=material-curso-ia-desarrolladores/unidad-8/taller/pedidos-web
-cp -r $U8/docs/gobernanza pedidos-web/docs/
+U9=material-curso-ia-desarrolladores/unidad-9/taller/pedidos-web
+cp -r $U9/docs/adopcion pedidos-web/docs/
 ```
 
 ```powershell
 # Windows PowerShell
 cd material-curso-ia-desarrolladores; git pull; cd ..
-$U8 = "material-curso-ia-desarrolladores/unidad-8/taller/pedidos-web"
-Copy-Item -Recurse "$U8/docs/gobernanza" pedidos-web/docs/
+$U9 = "material-curso-ia-desarrolladores/unidad-9/taller/pedidos-web"
+Copy-Item -Recurse "$U9/docs/adopcion" pedidos-web/docs/
 ```
 
 **No se copian:** `README.md`, `AGENTS.md`, `REVIEW.md`, `PedidosWeb.sln`, `src/`, `tests/`, `legado/`, `migracion/`, `.claude/`, `.github/`, el resto de `docs/` ni `specs/`.
 
-### Preparación (9 min)
+### Preparación (7 min)
 
-Crea el `.env` **falso** en la raíz (valores inventados; nunca uses una clave real). Ya está en `.gitignore`:
-
-```bash
-# macOS, Linux, WSL o Git Bash
-cd pedidos-web
-printf 'DB_PASSWORD=falsa-no-usar-123\nAPI_KEY=sk-falsa-000000\n' > .env
-```
-
-```powershell
-# Windows PowerShell
-cd pedidos-web
-Set-Content .env "DB_PASSWORD=falsa-no-usar-123"
-Add-Content .env "API_KEY=sk-falsa-000000"
-```
-
-Luego comprueba que todo está en verde y sube las plantillas:
+Comprueba tu versión de Claude Code y sube los archivos nuevos:
 
 ```bash
-claude --version     # 2.1.277 o superior
-dotnet test
-git status           # .env NO debe aparecer
-git add docs/gobernanza
-git commit -m "chore: base de la Unidad 8 (plantillas de gobernanza)"
+claude --version     # 2.1.281 o superior
+git status           # solo docs/adopcion/ debe aparecer como nuevo
+git add docs/adopcion
+git commit -m "chore: base de la Unidad 9 (datos de adopción)"
 git push
 ```
-
-**Resultado esperado:** `dotnet test` da el mismo resultado que al terminar la U7 (la preparación no suma código C#) y `.claude/settings.json` sigue con el deny de `legado/` (U4) y el hook `PostToolUse` (U5).
 
 Si `claude --version` es menor: `claude update`.
 
+**Resultado esperado:** el diff solo muestra los 2 archivos de `docs/adopcion/`, tu repo sigue **público** en GitHub y sabes qué compañero de tu grupo de 3 instalará tu plugin.
+
 ### B. No tienes tu repo de las unidades anteriores
 
-Sigue el paso 1 del README de `unidad-1/taller/pedidos-web` (crear tu repo **público** en GitHub), pero copia esta carpeta (`unidad-8/taller/pedidos-web`) en vez de la de la Unidad 1. En este camino el `AGENTS.md` viene vacío, no hay workflows ni `REVIEW.md`, y `.claude/settings.json` trae solo el deny de `legado/`: la etapa 2 funciona igual. Si algún test falla porque esa parte no está terminada, márcalo con `Skip` y un motivo; no lo borres.
+Sigue el paso 1 del README de `unidad-1/taller/pedidos-web` (crear tu repo **público** en GitHub), pero copia esta carpeta (`unidad-9/taller/pedidos-web`) en vez de la de la Unidad 1. En este camino el `AGENTS.md` viene vacío, no hay workflows, `REVIEW.md`, subagente `revisor`, Skill `documentar-modulo` ni `guardian.sh`, y `.claude/settings.json` trae solo el deny de `legado/`. Para la etapa 2, pídele a Claude Code que cree las piezas que te faltan siguiendo los README de las unidades 3, 7 y 8: el plugin se arma igual.
 
 ---
 
-## Taller de la Unidad 8: lo que encuentras en el repo
+## Taller de la Unidad 9: lo que encuentras en el repo
 
-La misión: **que tu `pedidos-web` cumpla su política de IA por configuración, no de memoria.** Trabajo individual en tu repo. 94 minutos.
+La misión: **que otro equipo instale con un comando la forma de trabajar de Pedidos Web, y entregar el plan para que la BU la adopte.** Trabajo individual en tu repo; tu grupo de 3 sirve para que un compañero instale tu plugin. 90 minutos.
 
 | Etapa | Min | Dónde queda tu trabajo |
 |---|---|---|
-| Preparación | 9 | `docs/gobernanza/` en tu repo y el `.env` falso solo en tu equipo |
-| 1 · Auditar sin creer | 25 | `docs/gobernanza/auditoria-legado.md` |
-| 2 · Reglas que bloquean de verdad | 30 | `.claude/settings.json` ampliado y `.claude/hooks/guardian.sh` en `main` |
-| 3 · Tu política por escrito | 15 | `docs/gobernanza/politica-ia.md` en `main` |
-| Tu reto (obligatorio) | 15 | `.github/dependabot.yml` en `main` |
+| Preparación | 7 | `docs/adopcion/` en tu repo |
+| 1 · Diagnóstico | 18 | El diagnóstico en `docs/adopcion/plan-evolucion.md` |
+| 2 · Playbook instalable | 35 | `.claude-plugin/marketplace.json` y `plugins/pedidos-playbook/` en `main`, instalado por tu compañero |
+| 3 · El plan en PDF | 20 | `.claude/skills/pdf-con-estilo/` y `docs/adopcion/plan-evolucion.pdf` en `main` |
+| Tu reto (obligatorio) | 10 | `pedidos-playbook` en versión 1.1.0, recibida por tu compañero |
 
-La guía del taller, con todo el recorrido, está en el [sitio del curso](https://ffelipecuevasc.github.io/curso-ia-desarrolladores/) → Unidad 8.
+La guía del taller, con todo el recorrido y los pedidos para Claude Code, está en el [sitio del curso](https://ffelipecuevasc.github.io/curso-ia-desarrolladores/) → Unidad 9.
 
 ### Comandos de cada etapa
 
-**Etapa 1 · Auditar sin creer.** El subagente `analista-legado` audita `legado/src/UFrmPedidos.pas` y `legado/src/UDMPrincipal.pas` (el pedido está en la guía). Tú abres cada archivo:línea, completas la plantilla y la subes:
+**Etapa 1 · Diagnóstico.** Claude Code lee el CSV y completa el diagnóstico de la plantilla (el pedido está en la guía). Tú revisas que cada nivel tenga dos indicadores del CSV y lo subes:
 
 ```bash
-git add docs/gobernanza/auditoria-legado.md
-git commit -m "docs: auditoría del legado con hallazgos validados y descartados"
+git add docs/adopcion/plan-evolucion.md
+git commit -m "docs: diagnóstico de adopción de la BU"
 git push
 ```
 
-**Etapa 2 · Reglas que bloquean de verdad.** Claude Code **suma** a `.claude/settings.json` (sin borrar nada) un deny para leer `.env` y `*.pem`, un ask para `curl`, `wget`, `Invoke-WebRequest`, `WebFetch` y para editar `migracion/golden-master.csv`, y crea `.claude/hooks/guardian.sh` como hook `PreToolUse`. Revisa el diff: **no debe haber líneas borradas** en `settings.json`.
+**Etapa 2 · Playbook instalable.** Claude Code arma `plugins/pedidos-playbook/` con tu revisor (U7), tu Skill `documentar-modulo` (U3), la Skill `planificador-proyectos-web`, tu guardián (U8), una plantilla de `AGENTS.md` y el MCP `claude-academy`, y crea `.claude-plugin/marketplace.json` con el nombre `pedidos-<tu-usuario-github>`. Si Claude Code necesita la Skill del planificador, está en [github.com/ffelipecuevasc/planificador-proyectos-web](https://github.com/ffelipecuevasc/planificador-proyectos-web) (carpeta `skills/planificador-proyectos-web/`).
 
-Después de cada cambio en `settings.json`, sal de Claude Code (`/exit`), vuelve a abrirlo **desde la raíz** y confírmalo:
+Valida desde la terminal, en la raíz de tu repo y en la carpeta del plugin:
+
+```bash
+claude plugin validate .
+claude plugin validate plugins/pedidos-playbook
+```
+
+Súbelo (tu compañero instala desde GitHub, así que sin push no hay plugin):
+
+```bash
+git add .claude-plugin plugins
+git commit -m "feat: plugin pedidos-playbook 1.0.0 y marketplace"
+git push
+```
+
+**Punto de control: tu compañero instala tu plugin.** Él abre Claude Code en **su** `pedidos-web` y escribe, cambiando `<usuario>` por tu usuario de GitHub:
 
 ```text
-/permissions     # deben aparecer las reglas nuevas y el deny de legado/
-/hooks           # deben aparecer PreToolUse y PostToolUse
+/plugin marketplace add <usuario>/pedidos-web
+/plugin install pedidos-playbook@pedidos-<usuario>
+/mcp
 ```
 
-Para probar la regla de `*.pem`, crea un certificado falso (también lo ignora `.gitignore`):
+**Resultado esperado:** `/plugin` muestra `pedidos-playbook` instalado y `/mcp` muestra `claude-academy`. Luego cambian roles: tú instalas el suyo.
+
+**Etapa 3 · El plan en PDF.** Claude Code crea la Skill `.claude/skills/pdf-con-estilo/` (`SKILL.md`, `assets/plantilla.html` y `scripts/html_a_pdf.py` con Playwright) y genera `docs/adopcion/plan-evolucion.pdf`. Para la prueba de reutilización, pídele que use la misma Skill con `docs/gobernanza/politica-ia.md`: debe salir con el mismo diseño, sin tocar el CSS. Ese segundo PDF no se sube. Luego:
 
 ```bash
-mkdir -p certs && echo "falso" > certs/prueba.pem          # bash o Git Bash
-```
-
-```powershell
-New-Item -ItemType Directory -Force certs | Out-Null; Set-Content certs/prueba.pem "falso"   # PowerShell
-```
-
-Intenta violar cada regla (la tabla está en la guía), también el deny de `legado/`, y anota qué pasó. Luego súbelo:
-
-```bash
-git add .claude/settings.json .claude/hooks/guardian.sh
-git commit -m "chore: reglas de gobernanza y hook guardián en .claude/"
+git add .claude/skills/pdf-con-estilo docs/adopcion
+git commit -m "docs: plan de evolución en PDF con la Skill pdf-con-estilo"
 git push
 ```
 
-**Etapa 3 · Tu política por escrito.** Claude Code completa `docs/gobernanza/politica-ia.md` con tus notas de la etapa 2. Tú la revisas y la subes:
+### Etapa extra obligatoria · Tu reto (10 min)
 
-```bash
-git add docs/gobernanza/politica-ia.md
-git commit -m "docs: política de uso de IA con controles probados"
-git push
-```
+**Tema nuevo:** versionado de un plugin. Un plugin instalado es una copia: tu compañero no ve tus cambios hasta que los publicas como versión nueva.
 
-### Etapa extra obligatoria · Tu reto (15 min)
-
-**Tema nuevo:** cadena de suministro. Las dependencias también son input: hay que vigilarlas.
-
-**Tu reto:** crea `.github/dependabot.yml` para que GitHub vigile las dependencias de tu `pedidos-web`: paquetes NuGet y las acciones de tus workflows. Esta vez el pedido a Claude Code lo escribes tú.
+**Tu reto:** haz un cambio tuyo en `pedidos-playbook` (por ejemplo, mejora la `description` de una Skill o suma una regla al revisor), publícalo como **1.1.0** y logra que tu compañero lo reciba. Esta vez el pedido a Claude Code lo escribes tú.
 
 **Cómo pensarlo:**
-1. ¿Qué tipos de dependencias tiene tu repo?
-2. ¿En qué carpeta busca GitHub cada una?
-3. ¿Cómo compruebas en GitHub que Dependabot leyó tu archivo?
+1. ¿Qué campo de tu plugin le avisa a Claude Code que hay algo nuevo?
+2. ¿Qué recibe tu compañero si haces push sin cambiar ese campo?
+3. ¿Qué tiene que hacer tu compañero para traer la versión nueva?
 
-**Listo cuando:** el archivo está en `main` · en *Insights › Dependency graph › Dependabot* aparecen NuGet y GitHub Actions · si llega un PR de Dependabot, no lo mergeas hoy: lo revisas como cualquier PR.
+**Listo cuando:** tu compañero ve la versión 1.1.0 en `/plugin` y tu cambio funciona en su equipo.
 
 Si no alcanzas en clase, termínalo en tu casa: es parte del entregable.
 
 ### Reglas del taller
 
-- **`settings.json` se amplía, nunca se reemplaza.** Conserva el deny de `legado/` (U4) y el hook `PostToolUse` (U5).
-- **Solo valores falsos.** El `.env` y el `.pem` de este taller son inventados y nunca se suben.
-- **Una regla que no intentaste violar no sabes si funciona.** Anota también lo que **no** se bloqueó.
-- **La IA propone; tú validas.** Ningún hallazgo de la auditoría se marca Validado sin abrir su línea.
+- **La U9 solo suma.** No reemplaces `settings.json`, `AGENTS.md` ni nada de las unidades anteriores: el plugin **copia** tus piezas, no las mueve.
+- **Nada de rutas de tu máquina en el plugin.** Todo lo que el plugin ejecuta se ubica con `${CLAUDE_PLUGIN_ROOT}`.
+- **Repo público y sin secretos.** El `.env` y el `.pem` falsos de la U8 siguen fuera del repo.
+- **Un plugin que solo funciona en tu equipo no es un playbook.** La prueba es que tu compañero lo instale.
 
 ### Si algo falla
 
-- **El hook no corre:** en Windows, revisa que tengas Git Bash y reinicia Claude Code desde la raíz. Si sigue, pídele a Claude Code que revise cómo quedó registrado el hook.
-- **Perdiste el deny de la U4 o el hook de la U5:** reemplazaste `settings.json`. Vuelve al último commit y suma las reglas de nuevo, sin borrar.
-- **La regla «no hace nada»:** revisa `/permissions`. Si no aparece, pídele a Claude Code que valide el JSON de `settings.json` y reinicia la sesión.
+- **Tu compañero no logra agregar tu marketplace:** revisa que tu repo sea público, que hiciste push y que `marketplace.json` esté en `.claude-plugin/` en la raíz.
+- **La validación marca una ruta del plugin:** la ruta de `source` parte de la raíz del marketplace con `./` y la carpeta existe.
+- **El guardián no corre en el equipo de tu compañero:** la ruta del script usa `${CLAUDE_PLUGIN_ROOT}` y no una ruta de tu máquina. En Windows, revisa Git Bash.
+- **`claude-academy` no aparece en `/mcp`:** `.mcp.json` va en la raíz del plugin, no dentro de `.claude-plugin/`. Tu compañero puede reiniciar Claude Code o usar `/reload-plugins`.
+- **El PDF sale sin colores de fondo:** el script debe imprimir el fondo y el CSS no debe desactivarlo.
 
-### Las plantillas (`docs/gobernanza/`)
+### Lo que encuentras en `docs/adopcion/`
 
-| Plantilla | Etapa | Qué completas |
+| Archivo | Etapa | Qué es |
 |---|---|---|
-| `auditoria-legado.md` | 1 | Hallazgos con archivo:línea, estado (Validado o Descartado) y argumento, más el cruce con `docs/diagnostico/riesgos.md` de la U4 |
-| `politica-ia.md` | 3 | Datos que nunca entran, controles y si se probaron, lo no cubierto, 3 escenarios y la línea «Uso de IA» de los PR |
+| `analytics-ficticio.csv` | 1 | 4 equipos (Pedidos Web, Facturacion, Bodega y Reportes) × 8 semanas. Columnas: `semana`, `equipo`, `usuarios_activos`, `sesiones`, `lineas_aceptadas`, `tasa_aceptacion`, `pr_con_cc`, `pr_totales`. Una `tasa_aceptacion` vacía significa que esa semana no hubo sesiones. |
+| `plan-evolucion.md` | 1 y 3 | La plantilla del plan: resumen, diagnóstico, objetivos, playbook, hoja de ruta, indicadores y riesgos. |
 
 ## Licencias
 
-- Claude Pro (incluye Claude Code). Permisos, hooks y subagentes funcionan en cualquier plan.
+- Claude Team Standard (tu cuenta del curso), con Claude Code. Plugins, marketplaces, hooks y MCP también funcionan con Claude Pro.
 - JetBrains Rider y .NET 10 SDK.
-- GitHub gratis con tu repo **público**. Dependabot no tiene costo en repos públicos *(no verificado)*.
-- No se necesita Claude Team: los planes comerciales solo se mencionan en la clase.
+- Python 3 con Playwright (gratis).
+- GitHub gratis con tu repo **público**.
+- El MCP de Claude Academy es público y no pide cuenta.
 - No se necesita licencia de Delphi ni de DBISAM: el legado no se compila.
 
-*(Verificar en tu equipo: `guardian.sh` es bash y solo se probó en Linux; en Windows corre con Git Bash y no está probado.)*
+*(Verificar en tu equipo: los comandos de instalación del compañero y el hook del plugin en Windows no se probaron al preparar este material.)*
 
 ## Talleres anteriores
 
@@ -225,3 +228,4 @@ Si no alcanzas en clase, termínalo en tu casa: es parte del entregable.
 - **Unidad 5** (migración del cálculo de totales con golden master): ver el README de `unidad-5/taller/pedidos-web`.
 - **Unidad 6** (tests que sí prueban, `ci.yml`, `claude.yml` y la falla diagnosticada por `@claude`): ver el README de `unidad-6/taller/pedidos-web`.
 - **Unidad 7** (`REVIEW.md`, subagente `revisor`, `claude-review.yml` y la plantilla de PR): ver el README de `unidad-7/taller/pedidos-web`.
+- **Unidad 8** (auditoría del legado, reglas de `.claude/settings.json`, `guardian.sh`, política de IA y `dependabot.yml`): ver el README de `unidad-8/taller/pedidos-web`.

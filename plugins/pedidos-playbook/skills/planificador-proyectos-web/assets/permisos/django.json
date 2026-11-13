@@ -1,0 +1,107 @@
+{
+  "descripcion": "Backend o monolito modular con Python y Django (uv o pip).",
+  "allow": {
+    "comandos": [
+      "Bash(python manage.py runserver)",
+      "Bash(python manage.py runserver *)",
+      "Bash(uv run python manage.py runserver)",
+      "Bash(uv run python manage.py runserver *)",
+      "Bash(python manage.py check)",
+      "Bash(python manage.py check *)",
+      "Bash(uv run python manage.py check)",
+      "Bash(uv run python manage.py check *)",
+      "Bash(python manage.py test)",
+      "Bash(python manage.py test *)",
+      "Bash(uv run python manage.py test)",
+      "Bash(uv run python manage.py test *)",
+      "Bash(python manage.py makemigrations)",
+      "Bash(python manage.py makemigrations *)",
+      "Bash(uv run python manage.py makemigrations)",
+      "Bash(uv run python manage.py makemigrations *)",
+      "Bash(python manage.py showmigrations)",
+      "Bash(python manage.py showmigrations *)",
+      "Bash(uv run python manage.py showmigrations)",
+      "Bash(uv run python manage.py showmigrations *)",
+      "Bash(python manage.py sqlmigrate)",
+      "Bash(python manage.py sqlmigrate *)",
+      "Bash(uv run python manage.py sqlmigrate)",
+      "Bash(uv run python manage.py sqlmigrate *)",
+      "Bash(uv sync)",
+      "Bash(uv run pytest)",
+      "Bash(uv run pytest *)",
+      "Bash(pytest)",
+      "Bash(pytest *)",
+      "Bash(python -m pytest *)",
+      "Bash(uv run ruff check *)",
+      "Bash(uv run ruff format *)",
+      "Bash(ruff check *)",
+      "Bash(ruff format *)",
+      "Bash(python --version)",
+      "Bash(uv --version)",
+      "Bash(pip list)",
+      "Bash(pip freeze)"
+    ],
+    "edicion": [
+      "Edit(/**/*.py)",
+      "Edit(/**/templates/**)",
+      "Edit(/**/static/**)",
+      "Edit(/tests/**)"
+    ],
+    "web": [
+      "WebFetch(domain:docs.djangoproject.com)",
+      "WebFetch(domain:docs.python.org)"
+    ]
+  },
+  "ask": {
+    "comandos": [
+      "Bash(uv add *)",
+      "Bash(uv remove *)",
+      "Bash(uv lock *)",
+      "Bash(pip install *)",
+      "Bash(pip uninstall *)",
+      "Bash(python -m pip install *)",
+      "Bash(python manage.py migrate)",
+      "Bash(python manage.py migrate *)",
+      "Bash(uv run python manage.py migrate)",
+      "Bash(uv run python manage.py migrate *)",
+      "Bash(python manage.py createsuperuser)",
+      "Bash(python manage.py createsuperuser *)",
+      "Bash(uv run python manage.py createsuperuser)",
+      "Bash(uv run python manage.py createsuperuser *)",
+      "Bash(python manage.py collectstatic)",
+      "Bash(python manage.py collectstatic *)",
+      "Bash(uv run python manage.py collectstatic)",
+      "Bash(uv run python manage.py collectstatic *)"
+    ],
+    "edicion": [
+      "Edit(/**/settings.py)",
+      "Edit(/**/settings/**)",
+      "Edit(/**/migrations/**)",
+      "Edit(/pyproject.toml)",
+      "Edit(/requirements*.txt)",
+      "Edit(/manage.py)"
+    ]
+  },
+  "deny": {
+    "comandos": [
+      "Bash(pip download *)",
+      "Bash(twine *)",
+      "Bash(uv publish *)",
+      "Bash(psql *)",
+      "Bash(mysql *)",
+      "Bash(mongosh *)",
+      "Bash(python manage.py flush)",
+      "Bash(python manage.py flush *)",
+      "Bash(uv run python manage.py flush)",
+      "Bash(uv run python manage.py flush *)",
+      "Bash(python manage.py dbshell)",
+      "Bash(python manage.py dbshell *)",
+      "Bash(uv run python manage.py dbshell)",
+      "Bash(uv run python manage.py dbshell *)",
+      "Bash(python manage.py sqlflush)",
+      "Bash(python manage.py sqlflush *)",
+      "Bash(uv run python manage.py sqlflush)",
+      "Bash(uv run python manage.py sqlflush *)"
+    ]
+  }
+}

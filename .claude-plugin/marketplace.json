@@ -1,0 +1,12 @@
+{
+  "name": "pedidos-amontilla",
+  "owner": { "name": "amontilla" },
+  "description": "Marketplace de la BU de desarrollo de la distribuidora: la forma de trabajar de Pedidos Web lista para instalar",
+  "plugins": [
+    {
+      "name": "pedidos-playbook",
+      "source": "./plugins/pedidos-playbook",
+      "description": "Revisor, documentar-modulo, planificador-proyectos-web, guardián, plantilla de AGENTS.md y MCP claude-academy de Pedidos Web"
+    }
+  ]
+}
