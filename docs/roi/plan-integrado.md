@@ -59,9 +59,17 @@ Se llevan a los otros equipos la política de datos que nunca entran a la IA (se
 - **Costo:** USD 3.900 en 12 meses (1.800 en asientos, 1.920 en capacitación, 180 de curva de adopción).
 - **Escenarios:** conservador 183 % (beneficio de USD 11.040); optimista 318 % (USD 16.320).
 - **Sensibilidad:** con el ahorro a la mitad, 78 %; con el ahorro y los defectos evitados a la mitad, 42 %; con un valor hora de USD 15, 145 %.
-- **Punto de equilibrio:** 2,7 h ahorradas por dev al mes (195 h al año para el equipo), sin contar los defectos evitados.
 
 Además, la migración corrigió 2 defectos del sistema legado. · Respaldo: `docs/roi/modelo-roi.md` · `docs/migracion/defectos-corregidos.md` (U5)
+
+### Punto de equilibrio
+Es donde el beneficio apenas cubre el costo: ROI = 0.
+
+- **Qué se despeja:** las horas ahorradas por dev al mes. **Fijos:** costo de USD 3.900, valor hora de USD 20, 6 devs y 12 meses. Los defectos evitados no se cuentan.
+- **Despeje:** 0 = (H × 20 − 3.900) / 3.900 ⇒ H × 20 = 3.900 ⇒ H = 195 h al año para el equipo ⇒ 195 / 6 / 12 = **2,7 h por dev al mes**.
+- **Contra el piloto:** se midieron 5,67 h por dev al mes, unas 2 veces el equilibrio.
+
+**Para la gerencia:** basta que cada dev ahorre 2,7 h al mes para cubrir el costo; el piloto muestra 5,7. · Respaldo: `docs/roi/modelo-roi.md`, sección 6
 
 ### Evolución
 Nivel 3 (Equipo con reglas) → meta: nivel 4 (Proceso AI-native), con la IA en todos los cambios del equipo y las mediciones de este plan revisadas cada mes. · Respaldo: `docs/adopcion/plan-evolucion.md` (U9)

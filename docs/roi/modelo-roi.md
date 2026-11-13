@@ -92,10 +92,14 @@ Aun con el ahorro a la mitad, el ROI sigue siendo positivo.
 
 **Qué dejo fijo:** el costo total (USD 3.900), el valor hora (USD 20) y el equipo (6 devs, 12 meses). Los defectos evitados **no se cuentan** (valen 0): el equilibrio depende solo de las horas, sin apoyarse en el costo por defecto, que es estimado.
 
-**Cálculo:**
+**Despeje paso a paso** (H = horas ahorradas del equipo en el año):
 
-- ROI = 0 ⇒ beneficio = costo ⇒ H × 20 = 3.900
-- H = 3.900 / 20 = 195 h al año (equipo)
+1. ROI = (beneficio − costo) / costo, y en el equilibrio ROI = 0.
+2. 0 = (H × 20 − 3.900) / 3.900
+3. Multiplico ambos lados por 3.900: 0 = H × 20 − 3.900
+4. Sumo 3.900: H × 20 = 3.900 (beneficio = costo)
+5. Divido por 20: H = 3.900 / 20 = 195 h al año (equipo)
+6. Comprobación: (195 × 20 − 3.900) / 3.900 = (3.900 − 3.900) / 3.900 = 0 ✔
 - Por dev al mes: 195 / 6 devs / 12 meses = **2,7 h**
 - Medido en el piloto (conservador): 8,5 h por semana × 48 / 12 / 6 = 5,67 h por dev al mes, unas **2 veces** el equilibrio (5,67 / 2,71 = 2,1).
 
